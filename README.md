@@ -147,8 +147,6 @@
 </head>
 <body>
 
-  <h2>🎬 RTSTUDIOS Watchlist 🎬</h2>
-
   <!-- Login area -->
   <input type="text" id="usernameInput" placeholder="Enter your name...">
   <button onclick="loginUser()">Login</button>
