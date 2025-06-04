@@ -18,7 +18,7 @@
     /* (they’re collapsed here for brevity)                                      */
     /* ------------------------------------------------------------------------ */
     body{font-family:'Poppins',sans-serif;background:radial-gradient(circle at top,#0e0e0e 20%,#1a1a1a 100%);color:#fff;max-width:700px;margin:30px auto;padding:30px;border-radius:15px;position:relative;overflow-y:auto;box-shadow:0 0 15px rgba(0,0,0,.35);background-image:url('https://www.transparenttextures.com/patterns/asfalt-dark.png');background-repeat:repeat}
-    body::before{content:"";position:absolute;inset:-10px;border-radius:inherit;pointer-events:none;z-index:9998;box-shadow:0 0 10px #fff3bd,0 0 20px #ffe98e,0 0 40px #ffd700,0 0 80px #ffdd00,inset 0 0 10px #fff3bd,inset 0 0 20px #ffe98e,inset 0 0 40px #ffd700;animation:flicker 3.5s infinite}
+    body::before{content:"";position:absolute;inset:-10px;border-radius:inherit;pointer-events:none;z-index:9998;box-shadow:0 0 10px #c08081,0 0 20px #cc6666,0 0 40px #c08081,0 0 80px #c08081,inset 0 0 10px #fff3bd,inset 0 0 20px #c08081,inset 0 0 40px #c08081;animation:flicker 3.5s infinite}
     @keyframes flicker{0%,19%,21%,23%,25%,54%,56%,100%{opacity:1}20%,24%,55%{opacity:.4}}
     h2{font-family:'Bebas Neue',cursive;font-size:32px;text-align:center;color:#e50914;letter-spacing:2px;margin-bottom:20px;z-index:1;position:relative}
     input[type=text]{border:solid;border-radius:20px;padding:10px;font-family:'Arial Black',sans-serif;font-size:16px;width:65%;margin:10px 0;background:#2a2a2a;color:#fff;box-shadow:0 0 20px 5px #000}
