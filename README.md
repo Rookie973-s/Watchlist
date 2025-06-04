@@ -95,7 +95,20 @@
   <div class="rt-banner">
     <div class="rt-glow">Brought to you by<br><strong>RTSTUDIOS</strong></div>
   </div>
-
+<a href="https://t.me/rtmoviesera" target="_blank">
+  <button style="
+    background-color: #229ED9;
+    color: #fff;
+    border: 1px solid #00bfff;
+    padding: 10px 16px;
+    font-size: 15px;
+    border-radius: 6px;
+    margin-top: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  ">
+    📲 Click To Join Telegram Channel
+  </button>
+</a>
   <script>
     /* -------------------------  YOUR JS  ------------------------- */
     const TMDB_KEY = "276ce1441c92d4989b5a0080e47e0633";
