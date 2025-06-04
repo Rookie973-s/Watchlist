@@ -219,7 +219,7 @@
   <!-- Login -->
   <input type="text" id="usernameInput" placeholder="Enter your name...">
   <button onclick="loginUser()">Login</button>
-  <p id="welcomeText"></p>
+  <p id="welcomeText" style="color: black;"></p>
 
   <!-- Add series -->
   <input type="text" id="seriesInput" placeholder="Enter series name..." disabled>
