@@ -75,8 +75,6 @@
   <div class="floating-text" style="top: 60%; left: 40%;">RTSTUDIOS</div>
   <div class="floating-text" style="top: 80%; left: 20%;">RTSTUDIOS</div>
 
-  <h2>Movies/Series</h2>
-
   <!-- Login -->
   <input type="text" id="usernameInput" placeholder="Enter your name...">
   <button onclick="loginUser()">Login</button>
@@ -87,8 +85,7 @@
     <input type="text" id="seriesInput" placeholder="Enter series name..." disabled autocomplete="off">
     <!-- NEW dropdown -->
     <div id="autocomplete"></div>
-  </div>
-  <button onclick="addSeries()">Add</button>
+  </div>  <button onclick="addSeries()">Add</button>
 
   <!-- List -->
   <ul id="seriesList"></ul>
