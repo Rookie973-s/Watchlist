@@ -25,7 +25,8 @@
     button{border-radius:20px;padding:10px 18px;font-family:'Arial Black',sans-serif;font-size:16px;width:auto;white-space:nowrap;margin:10px 0;background:maroon;color:#fff;transition:background .3s,transform .2s;box-shadow:0 0 10px rgba(229,9,20,.4);cursor:pointer}
     button:hover{background:#ff3333;transform:scale(1.05)}
     ul{list-style:none;padding:0;z-index:1;position:relative}
-    li{margin:12px 0;background:rgba(40,40,40,.85);padding:12px;border-radius:10px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 0 15px rgba(229,9,20,.2);transition:transform .2s}
+    li{margin:12px 0;background:rgba(40,40,40,.85);padding:12px;border-radius:10px;display:flex;align-items:center;justify-content:space-between; flex-wrap: wrap;
+       box-shadow:0 0 15px rgba(229,9,20,.2);transition:transform .2s}
     li:hover{transform:scale(1.01)}li span{flex-grow:1;margin-left:10px}
     .floating-text{position:fixed;z-index:0;font-size:30px;font-family:'Bebas Neue',cursive;color:rgba(255,255,255,.05);animation:moveRT 30s linear infinite;pointer-events:none;font-weight:200;text-align:center;text-shadow:2px 2px 0 rgba(255,255,255,.08),4px 4px 0 rgba(0,0,0,.15)}
     @keyframes moveRT{0%{transform:translateY(-100vh) rotate(0)}100%{transform:translateY(100vh) rotate(360deg)}}
