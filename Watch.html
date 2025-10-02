@@ -172,7 +172,7 @@
       const username = document.getElementById("usernameInput").value.trim();
       if (!username) return;
       currentUser = username;
-      document.getElementById("welcomeText").textContent = `Welcome, ${username}!`;
+      document.getElementById("welcomeText").textContent = `Welcome, ${username}!, Your lists are saved to this username/browser alone.. (well for now atleast try downloading the page for Chrome browsers to save permanently)`;
       inputBox.disabled = false;
       loadList();
     }
