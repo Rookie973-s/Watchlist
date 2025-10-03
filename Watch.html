@@ -1,25 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-7P8G6MP4Q6"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-7P8G6MP4Q6');
-</script>
   <title>RTSTUDIOS Watchlist</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins&display=swap" rel="stylesheet">
   <style>
-    /* ▸▸ your existing styles stay the same … ◂◂ */
-    /* (they’re collapsed here for brevity)                                      */
-    /* ------------------------------------------------------------------------ */
-    
-    body {
+    /* your same CSS (unchanged) */
+body {
         font-family: sans-serif;
       background-color: #121212;
       color: #ffffff;
@@ -118,7 +106,6 @@
   </style>
 </head>
 <body>
-
   <!-- Floating watermarks -->
   <div class="floating-text" style="top: 10%; left: 10%;">ROTSTUDIO</div>
   <div class="floating-text" style="top: 30%; left: 70%;">ROTSTUDIO</div>
@@ -133,9 +120,9 @@
   <!-- Add series -->
   <div style="position:relative;">
     <input type="text" id="seriesInput" placeholder="Enter series name..." disabled autocomplete="off">
-    <!-- NEW dropdown -->
     <div id="autocomplete"></div>
-<button onclick="addSeries()">Add</button>
+    <button onclick="addSeries()">Add</button>
+  </div>
 
   <!-- List -->
   <ul id="seriesList"></ul>
@@ -144,37 +131,45 @@
   <div class="rt-banner">
     <div class="rt-glow">Sponsored by<br><strong>ROTSTUDIO</strong></div>
   </div>
-<a href="https://t.me/rtmoviesera" target="_blank">
-  <button style="
-    background-color: #229ED9;
-    color: #fff;
-    border: 1px solid #00bfff;
-    padding: 10px 16px;
-    font-size: 15px;
-    border-radius: 6px;
-    margin-top: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-  ">
-    📲 Click To Join Telegram Channel
-  </button>
-</a>
+
+  <a href="https://t.me/rtmoviesera" target="_blank">
+    <button style="background-color: #229ED9; color:#fff;">📲 Click To Join Telegram Channel</button>
+  </a>
+
   <script>
-    /* -------------------------  YOUR JS  ------------------------- */
     const TMDB_KEY = "276ce1441c92d4989b5a0080e47e0633";
     const IMG_BASE = "https://image.tmdb.org/t/p/w92";
+    const API_BASE = "http://localhost:4000"; // 👈 change later to your deployed backend URL
+
     let currentUser = null;
+    let authToken = null;
+
     const seriesList = document.getElementById("seriesList");
     const inputBox   = document.getElementById("seriesInput");
     const acBox      = document.getElementById("autocomplete");
 
     /* ========== ACCOUNT ========== */
-    function loginUser() {
+    async function loginUser() {
       const username = document.getElementById("usernameInput").value.trim();
       if (!username) return;
-      currentUser = username;
-      document.getElementById("welcomeText").textContent = `Welcome, ${username}!, Your lists are saved to this username/browser alone.. (well for now atleast try downloading the page for Chrome browsers to save permanently)`;
-      inputBox.disabled = false;
-      loadList();
+      const password = prompt(`Hi ${username}, enter your password (new account will be created if it doesn't exist):`);
+      if(!password) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/login`, {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body:JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if(!res.ok) return alert(data.error || "Login failed");
+
+        authToken = data.token;
+        currentUser = data.username;
+        document.getElementById("welcomeText").textContent = `Welcome, ${username}! Your list is saved online.`;
+        inputBox.disabled = false;
+        await loadList();
+      } catch(e){ console.error(e); alert("Server error"); }
     }
 
     /* ========== AUTOCOMPLETE ========== */
@@ -207,14 +202,12 @@
         acBox.style.display = acBox.childElementCount ? "block":"none";
       }catch(e){ console.error(e); }
     }
-
-    /* close dropdown when clicking elsewhere */
     document.addEventListener("click",e=>{
       if(!acBox.contains(e.target) && e.target!==inputBox) acBox.style.display="none";
     });
 
     /* ========== ADD SERIES ITEM ========== */
-    function addSeries() {
+    async function addSeries() {
       const seriesName = inputBox.value.trim();
       if (!seriesName) return;
 
@@ -226,7 +219,6 @@
       checkbox.type="checkbox";
       checkbox.addEventListener("change",()=>{li.style.textDecoration=checkbox.checked?"line-through":"none";saveList();});
 
-      /* poster (if user picked from dropdown) */
       const posterUrl = inputBox.dataset.poster || "";
       if(posterUrl){
         const img = document.createElement("img");
@@ -245,55 +237,67 @@
       li.append(checkbox,span,deleteBtn);
       seriesList.appendChild(li);
 
-      /* reset */
       inputBox.value="";
       delete inputBox.dataset.poster;
       acBox.style.display="none";
-      saveList();
+      await saveList();
     }
 
-    /* ========== STORAGE ========== */
-    function saveList(){
-      if(!currentUser) return;
+    /* ========== STORAGE (Backend calls) ========== */
+    async function saveList(){
+      if(!currentUser || !authToken) return;
       const data = [...seriesList.querySelectorAll("li")].map(li=>{
         const name    = li.querySelector("span").textContent.trim();
         const watched = li.querySelector("input").checked;
         const imgEl   = li.querySelector("img");
-        return {name,watched,poster: imgEl?imgEl.src:""};
+        return { name, watched, poster: imgEl?imgEl.src:"" };
       });
-      localStorage.setItem(`watchlist_${currentUser}`,JSON.stringify(data));
+      try{
+        await fetch(`${API_BASE}/api/watchlist`,{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json",
+            "Authorization":`Bearer ${authToken}`
+          },
+          body:JSON.stringify({ watchlist:data })
+        });
+      }catch(e){ console.error(e); }
     }
 
-    function loadList(){
+    async function loadList(){
       seriesList.innerHTML="";
-      if(!currentUser) return;
-      const saved = localStorage.getItem(`watchlist_${currentUser}`);
-      if(!saved) return;
-      JSON.parse(saved).forEach(item=>{
-        const li        = document.createElement("li");
-        const checkbox  = document.createElement("input");
-        const span      = document.createElement("span");
-        const deleteBtn = document.createElement("button");
+      if(!currentUser || !authToken) return;
+      try{
+        const res = await fetch(`${API_BASE}/api/watchlist`,{
+          headers:{ "Authorization":`Bearer ${authToken}` }
+        });
+        const data = await res.json();
+        (data.watchlist||[]).forEach(item=>{
+          const li        = document.createElement("li");
+          const checkbox  = document.createElement("input");
+          const span      = document.createElement("span");
+          const deleteBtn = document.createElement("button");
 
-        checkbox.type="checkbox";
-        checkbox.checked=item.watched;
-        checkbox.addEventListener("change",()=>{li.style.textDecoration=checkbox.checked?"line-through":"none";saveList();});
+          checkbox.type="checkbox";
+          checkbox.checked=item.watched;
+          checkbox.addEventListener("change",()=>{li.style.textDecoration=checkbox.checked?"line-through":"none";saveList();});
 
-        if(item.poster){
-          const img = document.createElement("img");
-          img.src=item.poster;
-          img.style.width="60px";img.style.height="90px";img.style.objectFit="cover";img.style.borderRadius="6px";
-          li.appendChild(img);
-        }
+          if(item.poster){
+            const img = document.createElement("img");
+            img.src=item.poster;
+            img.style.width="60px";img.style.height="90px";img.style.objectFit="cover";img.style.borderRadius="6px";
+            li.appendChild(img);
+          }
 
-        span.textContent=item.name;
-        deleteBtn.textContent="Delete";
-        deleteBtn.addEventListener("click",()=>{li.remove();saveList();});
+          span.textContent=item.name;
+          deleteBtn.textContent="Delete";
+          deleteBtn.addEventListener("click",()=>{li.remove();saveList();});
 
-        li.append(checkbox,span,deleteBtn);
-        li.style.textDecoration=item.watched?"line-through":"none";
-        seriesList.appendChild(li);
-      });
+          li.append(checkbox,span,deleteBtn);
+          li.style.textDecoration=item.watched?"line-through":"none";
+          seriesList.appendChild(li);
+        });
+      }catch(e){ console.error(e); }
     }
   </script>
 </body>
