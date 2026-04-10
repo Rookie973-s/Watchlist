@@ -3,312 +3,902 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>RTSTUDIOS Watchlist</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins&display=swap" rel="stylesheet">
+  <title>ROTWAVE · Watchlist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0MSC72FNTK"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0MSC72FNTK"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-0MSC72FNTK');
+  </script>
 
-  gtag('config', 'G-0MSC72FNTK');
-</script>
   <style>
-    /* your same CSS (unchanged) */
-body {
-        font-family: sans-serif;
-      background-color: #121212;
-      color: #ffffff;
-      max-width: 600px;
-      margin: 30px auto;
-      padding: 20px;
-      border-radius: 15px;
-      background: linear-gradient(145deg, #1e1e1e, #1c1c1c);
-      box-shadow: 0 0 10px rgba(0,0,0,0.6); 
-      }
+    /* ── RESET & BASE ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    input[type="text"] {
-      padding: 10px;
-      font-size: 16px;
-      width: 70%;
+    :root {
+      --bg:          #0a0a0f;
+      --surface:     #111118;
+      --card:        #16161f;
+      --border:      rgba(255,255,255,.07);
+      --accent:      #e8c97a;
+      --accent2:     #c0392b;
+      --glow:        rgba(232,201,122,.18);
+      --glow2:       rgba(192,57,43,.18);
+      --text:        #f0ece4;
+      --muted:       #6b6876;
+      --radius:      14px;
+      --transition:  .25s cubic-bezier(.4,0,.2,1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── CINEMATIC BACKGROUND ── */
+    .bg-layer {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(232,201,122,.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(192,57,43,.05) 0%, transparent 55%),
+        radial-gradient(ellipse 100% 100% at 50% 50%, #0a0a0f 0%, #07070c 100%);
+    }
+    .bg-noise {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 200px;
+    }
+
+    /* ── FLOATING WATERMARK ── */
+    .watermark {
+      position: fixed; z-index: 0; pointer-events: none;
+      font-family: 'Bebas Neue', cursive;
+      font-size: clamp(80px, 15vw, 180px);
+      color: rgba(255,255,255,.018);
+      letter-spacing: .08em;
+      white-space: nowrap;
+      animation: drift 40s linear infinite;
+      user-select: none;
+    }
+    .watermark:nth-child(1) { top: -5%;  left: -5%;  animation-duration: 38s; }
+    .watermark:nth-child(2) { top: 40%;  left: 60%;  animation-duration: 44s; animation-direction: reverse; }
+    .watermark:nth-child(3) { top: 75%;  left: -10%; animation-duration: 32s; }
+    @keyframes drift {
+      0%   { transform: translateY(0)   rotate(-3deg); }
+      50%  { transform: translateY(-40px) rotate(3deg); }
+      100% { transform: translateY(0)   rotate(-3deg); }
+    }
+
+    /* ── WRAPPER ── */
+    .wrapper {
+      position: relative; z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 48px 24px 120px;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      text-align: center;
+      margin-bottom: 52px;
+      animation: fadeUp .7s ease both;
+    }
+    .header-eyebrow {
+      font-family: 'Bebas Neue', cursive;
+      font-size: 12px;
+      letter-spacing: .3em;
+      color: var(--accent);
       margin-bottom: 10px;
-    font-family:'Arial Black',sans-serif;
-    font-size:16px;}
-    button{ padding: 10px;
-      font-size: 16px;
-      cursor: pointer;
-      background-color: #03dac6;
-      border: none;
-      color: #ffffff;
-      border-radius: 5px;
-      margin-left: 5px;
-      font-family: 'Arial Black',sans-serif;
-    transition:background .3s,transform .2s;cursor:pointer}
-    button:hover{
-        background:#151B54;transform:scale(1.05)}
-    ul{list-style:none;padding:0;z-index:1;position:relative}
-    li{
-        margin:12px 0;background:rgba(65, 64, 66);
-        padding:12px;border-radius:10px;
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-         flex-wrap: wrap;
-       box-shadow:0 0 15px rgba(229,9,20,.2);transition:transform .2s}
-    li:hover{transform:scale(1.01)}li span{flex-grow:1;margin-left:10px}
-    .floating-text{
-        position:fixed;z-index:0;font-size:30px;
-        font-family:'Bebas Neue',cursive;color:rgba(255,255,255,.05);
-        animation:moveRT 30s linear infinite;pointer-events:none;font-weight:200;
-        text-align:center;text-shadow:2px 2px 0 rgba(255,255,255,.08),4px 4px 0 rgba(0,0,0,.15)}
-    @keyframes moveRT{
-        0%{transform:translateY(-100vh) rotate(0)}100%{transform:translateY(100vh) rotate(360deg)}}
-    .rt-banner{
-        position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:1.5rem 2rem;
-        background:rgba(10,10,10,.85);
-        border-radius:12px;border:1px solid #555;
-        box-shadow:0 0 20px rgba(255,255,255,.1);color:#fff;font-family:'Georgia',serif;
-        text-align:center;z-index:9999;animation:lightning-in 4s ease-out,show-then-hide 10s ease forwards;pointer-events:none}
-    .rt-glow{
-        font-size:1.1rem;color:#f8e9b0;text-shadow:0 0 5px #fff3bd,0 0 10px #ffe98e,0 0 20px #ffd700;
-        animation:flicker 3.5s infinite}
-    .rt-glow strong{
-        display:block;margin-top:.5rem;
-        font-size:1.8rem;color:#fdf6c9;
-        text-shadow:0 0 5px #fff,0 0 10px #ffe95e,0 0 25px #ffdd00,0 0 40px #ffe34d}
-    @keyframes lightning-in{0%{
-        opacity:0;transform:translateX(-50%) scale(.8);filter:brightness(1)}20%{opacity:1;transform:translateX(-50%) scale(1);
-            filter:brightness(2.5)}40%{filter:brightness(1)}60%{filter:brightness(2)}80%{filter:brightness(1.2)}100%{filter:brightness(1)}}
-    @keyframes show-then-hide{0%,80%{opacity:1}100%{opacity:0;visibility:hidden}}
+      opacity: .8;
+    }
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(38px, 8vw, 62px);
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(135deg, #f5e8c0 0%, var(--accent) 50%, #c9a94e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+    .header-sub {
+      font-size: 14px;
+      color: var(--muted);
+      letter-spacing: .04em;
+    }
+    .header-divider {
+      display: flex; align-items: center; gap: 16px;
+      margin-top: 28px;
+    }
+    .header-divider::before,
+    .header-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+    }
+    .header-divider span {
+      font-size: 18px; color: var(--accent); opacity: .6;
+    }
 
-    /* === NEW: autocomplete dropdown === */
+    /* ── LOGIN CARD ── */
+    .login-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 28px;
+      animation: fadeUp .7s .1s ease both;
+      box-shadow: 0 20px 60px rgba(0,0,0,.4);
+    }
+    .login-card-label {
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .login-row {
+      display: flex;
+      gap: 10px;
+    }
+    .welcome-text {
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--accent);
+      letter-spacing: .02em;
+      min-height: 20px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .welcome-text::before {
+      content: '✦';
+      font-size: 10px;
+      opacity: .7;
+    }
+    .welcome-text:empty::before { display: none; }
+
+    /* ── INPUTS ── */
+    input[type="text"] {
+      flex: 1;
+      padding: 13px 18px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      outline: none;
+      transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+    }
+    input[type="text"]::placeholder { color: var(--muted); }
+    input[type="text"]:focus {
+      border-color: rgba(232,201,122,.4);
+      background: rgba(232,201,122,.04);
+      box-shadow: 0 0 0 3px rgba(232,201,122,.08);
+    }
+    input[type="text"]:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      padding: 13px 22px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: .04em;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #e8c97a, #c9a94e);
+      color: #0a0a0f;
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(232,201,122,.35);
+    }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-ghost {
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover {
+      background: rgba(255,255,255,.09);
+      border-color: rgba(255,255,255,.12);
+    }
+    .btn-danger {
+      background: transparent;
+      color: #c0392b;
+      border: 1px solid rgba(192,57,43,.3);
+      padding: 7px 14px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+    .btn-danger:hover {
+      background: rgba(192,57,43,.15);
+      border-color: rgba(192,57,43,.5);
+    }
+    .btn-telegram {
+      width: 100%;
+      background: linear-gradient(135deg, #229ED9, #1a7fb5);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 15px;
+      border-radius: 16px;
+      padding: 16px;
+      text-decoration: none;
+    }
+    .btn-telegram:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(34,158,217,.3);
+    }
+
+    /* ── ADD SECTION ── */
+    .add-section {
+      position: relative;
+      margin-bottom: 32px;
+      animation: fadeUp .7s .2s ease both;
+    }
+    .add-section-label {
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .add-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* ── AUTOCOMPLETE ── */
     #autocomplete {
       position: absolute;
-      width: 65%;                /* same width as input */
-      max-height: 260px;
+      top: calc(100% + 8px);
+      left: 0;
+      width: calc(100% - 110px);
+      max-height: 280px;
       overflow-y: auto;
-      background:#1e1e1e;
-      border-radius:12px;
-      border:1px solid #444;
-      box-shadow:0 0 12px rgba(0,0,0,.45);
-      z-index:10000;
-      display:none;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 16px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.03);
+      z-index: 10000;
+      display: none;
+      overflow-x: hidden;
     }
+    #autocomplete::-webkit-scrollbar { width: 4px; }
+    #autocomplete::-webkit-scrollbar-track { background: transparent; }
+    #autocomplete::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
     .ac-item {
-      display:flex;
-      align-items:center;
-      padding:6px 10px;
-      cursor:pointer;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: background var(--transition);
+      border-bottom: 1px solid rgba(255,255,255,.04);
     }
-    .ac-item img{
-      width:46px;height:69px;object-fit:cover;border-radius:4px;flex-shrink:0;
+    .ac-item:last-child { border-bottom: none; }
+    .ac-item:hover { background: rgba(232,201,122,.06); }
+    .ac-item img {
+      width: 42px; height: 63px;
+      object-fit: cover;
+      border-radius: 6px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,.4);
     }
-    .ac-item span{
-      margin-left:10px;
-      font-size:15px;
-      color:#eee;
+    .ac-item-info { flex: 1; overflow: hidden; }
+    .ac-item-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .ac-item:hover{
-      background:#333;
+    .ac-item-type {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
     }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      animation: fadeUp .7s .25s ease both;
+    }
+    .stat {
+      flex: 1;
+      text-align: center;
+    }
+    .stat + .stat {
+      border-left: 1px solid var(--border);
+    }
+    .stat-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ── LIST ── */
+    .section-label {
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+      animation: fadeUp .7s .3s ease both;
+    }
+    #seriesList {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ── LIST ITEM ── */
+    li.series-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+      animation: slideIn .35s ease both;
+      box-shadow: 0 4px 20px rgba(0,0,0,.25);
+      position: relative;
+    }
+    li.series-item::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    li.series-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 36px rgba(0,0,0,.4);
+      border-color: rgba(255,255,255,.11);
+    }
+    li.series-item:hover::before { opacity: 1; }
+
+    li.series-item.watched {
+      opacity: .5;
+    }
+    li.series-item.watched .item-title {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+    li.series-item.watched::before {
+      background: linear-gradient(180deg, #4caf50, transparent);
+      opacity: 1;
+    }
+
+    /* poster */
+    .item-poster {
+      width: 64px;
+      height: 96px;
+      object-fit: cover;
+      flex-shrink: 0;
+      display: block;
+    }
+    .item-poster-placeholder {
+      width: 64px;
+      height: 96px;
+      flex-shrink: 0;
+      background: rgba(255,255,255,.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    /* checkbox */
+    .item-check-wrap {
+      padding: 0 16px;
+      flex-shrink: 0;
+    }
+    .item-check {
+      appearance: none;
+      width: 20px; height: 20px;
+      border: 2px solid rgba(255,255,255,.2);
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+      transition: all var(--transition);
+      flex-shrink: 0;
+    }
+    .item-check:checked {
+      background: #4caf50;
+      border-color: #4caf50;
+    }
+    .item-check:checked::after {
+      content: '✓';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 11px;
+      line-height: 18px;
+      text-align: center;
+      width: 100%;
+    }
+    .item-check:hover { border-color: var(--accent); }
+
+    /* title */
+    .item-body {
+      flex: 1;
+      padding: 14px 12px 14px 0;
+      min-width: 0;
+    }
+    .item-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color var(--transition);
+    }
+    .item-meta {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+
+    /* delete */
+    .item-actions {
+      padding: 0 16px;
+      flex-shrink: 0;
+    }
+
+    /* ── TELEGRAM SECTION ── */
+    .telegram-section {
+      margin-top: 44px;
+      animation: fadeUp .7s .4s ease both;
+    }
+    .telegram-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      text-align: center;
+    }
+    .telegram-card-eyebrow {
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .telegram-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    .telegram-card-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 52px 20px;
+      color: var(--muted);
+      animation: fadeUp .5s ease both;
+    }
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: .35;
+    }
+    .empty-state-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: rgba(240,236,228,.4);
+      margin-bottom: 8px;
+    }
+    .empty-state-sub { font-size: 13px; }
+
+    /* ── FOOTER ── */
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 11px;
+      color: rgba(107,104,118,.5);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-12px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .wrapper { padding: 32px 16px 100px; }
+      .login-row { flex-direction: column; }
+      .login-row input { width: 100%; }
+      .item-poster, .item-poster-placeholder { width: 52px; height: 78px; }
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 4px; }
   </style>
 </head>
 <body>
-  <!-- Floating watermarks -->
-  <div class="floating-text" style="top: 10%; left: 10%;">ROTWAVE</div>
-  <div class="floating-text" style="top: 30%; left: 70%;">ROTWAVE</div>
-  <div class="floating-text" style="top: 60%; left: 40%;">ROTWAVE</div>
-  <div class="floating-text" style="top: 80%; left: 20%;">ROTWAVE</div>
 
-  <!-- Login -->
-  <input type="text" id="usernameInput" placeholder="Enter your name...">
-  <button onclick="loginUser()">Login</button>
-  <p id="welcomeText" style="color: #ffffff;"></p>
+  <!-- Background -->
+  <div class="bg-layer"></div>
+  <div class="bg-noise"></div>
 
-  <!-- Add series -->
-  <div style="position:relative;">
-    <input type="text" id="seriesInput" placeholder="Enter series name..." disabled autocomplete="off">
-    <div id="autocomplete"></div>
-    <button onclick="addSeries()">Add</button>
+  <!-- Watermarks -->
+  <div class="watermark">ROTWAVE</div>
+  <div class="watermark">ROTWAVE</div>
+  <div class="watermark">ROTWAVE</div>
+
+  <div class="wrapper">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-eyebrow">✦ &nbsp;Your Personal Cinema &nbsp;✦</div>
+      <h1>ROTWAVE</h1>
+      <p class="header-sub">Track every series, film &amp; obsession</p>
+      <div class="header-divider"><span>◆</span></div>
+    </header>
+
+    <!-- Login -->
+    <div class="login-card">
+      <div class="login-card-label">Sign In / Register</div>
+      <div class="login-row">
+        <input type="text" id="usernameInput" placeholder="Your username…">
+        <button class="btn btn-primary" onclick="loginUser()">Enter</button>
+      </div>
+      <p id="welcomeText" class="welcome-text"></p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar" id="statsBar" style="display:none;">
+      <div class="stat">
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-label">Total</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="statWatched">0</div>
+        <div class="stat-label">Watched</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="statLeft">0</div>
+        <div class="stat-label">To Watch</div>
+      </div>
+    </div>
+
+    <!-- Add Series -->
+    <div class="add-section">
+      <div class="add-section-label">Add to Watchlist</div>
+      <div class="add-row" style="position:relative;">
+        <input type="text" id="seriesInput" placeholder="Search for a series or film…" disabled autocomplete="off">
+        <div id="autocomplete"></div>
+        <button class="btn btn-primary" onclick="addSeries()">+ Add</button>
+      </div>
+    </div>
+
+    <!-- List -->
+    <div class="section-label">My Watchlist</div>
+    <ul id="seriesList"></ul>
+
+    <!-- Empty state (injected by JS) -->
+
+    <!-- Telegram -->
+    <div class="telegram-section">
+      <div class="telegram-card">
+        <div class="telegram-card-eyebrow">Join the Community</div>
+        <div class="telegram-card-title">ROTWAVE Telegram</div>
+        <div class="telegram-card-sub">Get notified about new releases, shows &amp; updates.</div>
+        <a href="https://t.me/rtmoviesera" target="_blank" class="btn btn-telegram">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+          Join Telegram Channel
+        </a>
+      </div>
+    </div>
+
+    <div class="footer">© ROTWAVE · All Rights Reserved</div>
   </div>
 
-  <!-- List -->
-  <ul id="seriesList"></ul>
-
-  <!-- Banner -->
-  <div class="rt-banner">
-    <div class="rt-glow">Sponsored by<br><strong>ROTWAVE</strong></div>
-  </div>
-
-  <a href="https://t.me/rtmoviesera" target="_blank">
-    <button style="background-color: #229ED9; color:#fff;">📲 Click To Join Telegram Channel</button>
-  </a>
 
   <script>
     const TMDB_KEY = "276ce1441c92d4989b5a0080e47e0633";
     const IMG_BASE = "https://image.tmdb.org/t/p/w92";
-    const API_BASE = "https://rtwatch-backend.onrender.com"; // backend URL
+    const API_BASE = "https://rtwatch-backend.onrender.com";
 
     let currentUser = null;
-    let authToken = null;
+    let authToken   = null;
 
     const seriesList = document.getElementById("seriesList");
     const inputBox   = document.getElementById("seriesInput");
     const acBox      = document.getElementById("autocomplete");
 
-    /* ========== ACCOUNT ========== */
+    /* ── STATS ── */
+    function updateStats() {
+      const items    = seriesList.querySelectorAll("li.series-item");
+      const watched  = seriesList.querySelectorAll("li.series-item.watched");
+      const total    = items.length;
+      const wCount   = watched.length;
+      const left     = total - wCount;
+
+      document.getElementById("statTotal").textContent   = total;
+      document.getElementById("statWatched").textContent = wCount;
+      document.getElementById("statLeft").textContent    = left;
+      document.getElementById("statsBar").style.display  = total > 0 ? "flex" : "none";
+
+      // empty state
+      const existing = document.getElementById("emptyState");
+      if (total === 0) {
+        if (!existing) {
+          const d = document.createElement("div");
+          d.id = "emptyState";
+          d.className = "empty-state";
+          d.innerHTML = `<div class="empty-state-icon">🎬</div>
+            <div class="empty-state-title">Nothing here yet</div>
+            <div class="empty-state-sub">Search for a series or film above to get started</div>`;
+          seriesList.after(d);
+        }
+      } else {
+        if (existing) existing.remove();
+      }
+    }
+
+    /* ── LOGIN ── */
     async function loginUser() {
       const username = document.getElementById("usernameInput").value.trim();
       if (!username) return;
-      const password = prompt(`Hi ${username}, enter your password (new account will be created if it doesn't exist):`);
-      if(!password) return;
+      const password = prompt(`Hi ${username}! Enter your password\n(A new account will be created if you're new):`);
+      if (!password) return;
 
       try {
-        const res = await fetch(`${API_BASE}/api/login`, {
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
-          body:JSON.stringify({ username, password })
+        const res  = await fetch(`${API_BASE}/api/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
         });
         const data = await res.json();
-        if(!res.ok) return alert(data.error || "Login failed");
+        if (!res.ok) return alert(data.error || "Login failed");
 
-        authToken = data.token;
+        authToken   = data.token;
         currentUser = data.username;
-        document.getElementById("welcomeText").textContent = `Welcome, ${username}! Your list is saved online.`;
+        document.getElementById("welcomeText").textContent = `Logged in as ${username}`;
         inputBox.disabled = false;
         await loadList();
-      } catch(e){ console.error(e); alert("Server error"); }
+      } catch(e) { console.error(e); alert("Server error"); }
     }
 
-    /* ========== AUTOCOMPLETE ========== */
+    /* ── AUTOCOMPLETE ── */
     let debounceTimer;
     inputBox.addEventListener("input", () => {
       const q = inputBox.value.trim();
       clearTimeout(debounceTimer);
-      if (!q) return acBox.style.display="none";
+      if (!q) return (acBox.style.display = "none");
       debounceTimer = setTimeout(() => fetchSuggestions(q), 350);
     });
 
-    async function fetchSuggestions(query){
+    async function fetchSuggestions(query) {
       const url = `https://api.themoviedb.org/3/search/multi?api_key=${TMDB_KEY}&language=en-US&page=1&include_adult=false&query=${encodeURIComponent(query)}`;
-      try{
-        const res = await fetch(url);
+      try {
+        const res  = await fetch(url);
         const data = await res.json();
         acBox.innerHTML = "";
-        data.results.slice(0,7).forEach(item=>{
-          if(!item.poster_path) return;
+        data.results.filter(i => i.poster_path).slice(0,7).forEach(item => {
           const div = document.createElement("div");
-          div.className="ac-item";
-          div.innerHTML = `<img src="${IMG_BASE}${item.poster_path}" alt=""><span>${item.title||item.name}</span>`;
-          div.addEventListener("click",()=>{
-            inputBox.value = item.title||item.name;
-            inputBox.dataset.poster = IMG_BASE+item.poster_path;
-            acBox.style.display="none";
+          div.className = "ac-item";
+          const type = item.media_type === "tv" ? "TV Series" : "Film";
+          div.innerHTML = `
+            <img src="${IMG_BASE}${item.poster_path}" alt="">
+            <div class="ac-item-info">
+              <div class="ac-item-title">${item.title || item.name}</div>
+              <div class="ac-item-type">${type}</div>
+            </div>`;
+          div.addEventListener("click", () => {
+            inputBox.value = item.title || item.name;
+            inputBox.dataset.poster = `https://image.tmdb.org/t/p/w185${item.poster_path}`;
+            inputBox.dataset.type   = type;
+            acBox.style.display = "none";
           });
           acBox.appendChild(div);
         });
-        acBox.style.display = acBox.childElementCount ? "block":"none";
-      }catch(e){ console.error(e); }
+        acBox.style.display = acBox.childElementCount ? "block" : "none";
+      } catch(e) { console.error(e); }
     }
-    document.addEventListener("click",e=>{
-      if(!acBox.contains(e.target) && e.target!==inputBox) acBox.style.display="none";
+    document.addEventListener("click", e => {
+      if (!acBox.contains(e.target) && e.target !== inputBox) acBox.style.display = "none";
     });
 
-    /* ========== ADD SERIES ITEM ========== */
-    async function addSeries() {
-      const seriesName = inputBox.value.trim();
-      if (!seriesName) return;
+    /* ── BUILD LIST ITEM ── */
+    function buildItem(item, animate = true) {
+      const li = document.createElement("li");
+      li.className = "series-item" + (item.watched ? " watched" : "");
+      if (!animate) li.style.animation = "none";
 
-      const li        = document.createElement("li");
-      const checkbox  = document.createElement("input");
-      const span      = document.createElement("span");
-      const deleteBtn = document.createElement("button");
-
-      checkbox.type="checkbox";
-      checkbox.addEventListener("change",()=>{li.style.textDecoration=checkbox.checked?"line-through":"none";saveList();});
-
-      const posterUrl = inputBox.dataset.poster || "";
-      if(posterUrl){
+      // Poster
+      if (item.poster) {
         const img = document.createElement("img");
-        img.src  = posterUrl;
-        img.style.width="60px";
-        img.style.height="90px";
-        img.style.objectFit="cover";
-        img.style.borderRadius="6px";
+        img.src = item.poster;
+        img.className = "item-poster";
+        img.alt = item.name;
         li.appendChild(img);
+      } else {
+        const ph = document.createElement("div");
+        ph.className = "item-poster-placeholder";
+        ph.textContent = "🎬";
+        li.appendChild(ph);
       }
 
-      span.textContent = seriesName;
-      deleteBtn.textContent="Delete";
-      deleteBtn.addEventListener("click",()=>{li.remove();saveList();});
+      // Checkbox
+      const checkWrap = document.createElement("div");
+      checkWrap.className = "item-check-wrap";
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.className = "item-check";
+      checkbox.checked = item.watched;
+      checkbox.addEventListener("change", () => {
+        li.classList.toggle("watched", checkbox.checked);
+        updateStats();
+        saveList();
+      });
+      checkWrap.appendChild(checkbox);
+      li.appendChild(checkWrap);
 
-      li.append(checkbox,span,deleteBtn);
+      // Body
+      const body = document.createElement("div");
+      body.className = "item-body";
+      const title = document.createElement("div");
+      title.className = "item-title";
+      title.textContent = item.name;
+      body.appendChild(title);
+      if (item.type) {
+        const meta = document.createElement("div");
+        meta.className = "item-meta";
+        meta.textContent = item.type;
+        body.appendChild(meta);
+      }
+      li.appendChild(body);
+
+      // Actions
+      const actions = document.createElement("div");
+      actions.className = "item-actions";
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "btn btn-danger";
+      deleteBtn.textContent = "Remove";
+      deleteBtn.addEventListener("click", () => {
+        li.style.opacity = "0";
+        li.style.transform = "scale(.95)";
+        li.style.transition = "all .2s ease";
+        setTimeout(() => { li.remove(); updateStats(); saveList(); }, 200);
+      });
+      actions.appendChild(deleteBtn);
+      li.appendChild(actions);
+
+      return li;
+    }
+
+    /* ── ADD ── */
+    async function addSeries() {
+      const name = inputBox.value.trim();
+      if (!name) return;
+      const poster = inputBox.dataset.poster || "";
+      const type   = inputBox.dataset.type   || "";
+      const li = buildItem({ name, watched: false, poster, type });
       seriesList.appendChild(li);
-
-      inputBox.value="";
+      inputBox.value = "";
       delete inputBox.dataset.poster;
-      acBox.style.display="none";
+      delete inputBox.dataset.type;
+      acBox.style.display = "none";
+      updateStats();
       await saveList();
     }
 
-    /* ========== STORAGE (Backend calls) ========== */
-    async function saveList(){
-      if(!currentUser || !authToken) return;
-      const data = [...seriesList.querySelectorAll("li")].map(li=>{
-        const name    = li.querySelector("span").textContent.trim();
-        const watched = li.querySelector("input").checked;
-        const imgEl   = li.querySelector("img");
-        return { name, watched, poster: imgEl?imgEl.src:"" };
-      });
-      try{
-        await fetch(`${API_BASE}/api/watchlist`,{
-          method:"POST",
-          headers:{
-            "Content-Type":"application/json",
-            "Authorization":`Bearer ${authToken}`
+    /* ── ENTER KEY ── */
+    inputBox.addEventListener("keydown", e => {
+      if (e.key === "Enter") addSeries();
+    });
+
+    /* ── SAVE ── */
+    async function saveList() {
+      if (!currentUser || !authToken) return;
+      const data = [...seriesList.querySelectorAll("li.series-item")].map(li => ({
+        name:    li.querySelector(".item-title").textContent.trim(),
+        watched: li.querySelector(".item-check").checked,
+        poster:  li.querySelector(".item-poster")?.src || "",
+        type:    li.querySelector(".item-meta")?.textContent || ""
+      }));
+      try {
+        await fetch(`${API_BASE}/api/watchlist`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${authToken}`
           },
-          body:JSON.stringify({ watchlist:data })
+          body: JSON.stringify({ watchlist: data })
         });
-      }catch(e){ console.error(e); }
+      } catch(e) { console.error(e); }
     }
 
-    async function loadList(){
-      seriesList.innerHTML="";
-      if(!currentUser || !authToken) return;
-      try{
-        const res = await fetch(`${API_BASE}/api/watchlist`,{
-          headers:{ "Authorization":`Bearer ${authToken}` }
+    /* ── LOAD ── */
+    async function loadList() {
+      seriesList.innerHTML = "";
+      if (!currentUser || !authToken) return;
+      try {
+        const res  = await fetch(`${API_BASE}/api/watchlist`, {
+          headers: { "Authorization": `Bearer ${authToken}` }
         });
         const data = await res.json();
-        (data.watchlist||[]).forEach(item=>{
-          const li        = document.createElement("li");
-          const checkbox  = document.createElement("input");
-          const span      = document.createElement("span");
-          const deleteBtn = document.createElement("button");
-
-          checkbox.type="checkbox";
-          checkbox.checked=item.watched;
-          checkbox.addEventListener("change",()=>{li.style.textDecoration=checkbox.checked?"line-through":"none";saveList();});
-
-          if(item.poster){
-            const img = document.createElement("img");
-            img.src=item.poster;
-            img.style.width="60px";img.style.height="90px";img.style.objectFit="cover";img.style.borderRadius="6px";
-            li.appendChild(img);
-          }
-
-          span.textContent=item.name;
-          deleteBtn.textContent="Delete";
-          deleteBtn.addEventListener("click",()=>{li.remove();saveList();});
-
-          li.append(checkbox,span,deleteBtn);
-          li.style.textDecoration=item.watched?"line-through":"none";
+        (data.watchlist || []).forEach(item => {
+          const li = buildItem(item, false);
           seriesList.appendChild(li);
         });
-      }catch(e){ console.error(e); }
+      } catch(e) { console.error(e); }
+      updateStats();
     }
+
+    /* Initial empty state */
+    updateStats();
   </script>
 </body>
 </html>
