@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WAVE · Watchlist</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <title>RTSTUDIOS Watchlist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-0MSC72FNTK"></script>
@@ -16,662 +16,519 @@
   </script>
 
   <style>
-    /* ── RESET & BASE ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:          #0a0a0f;
-      --surface:     #111118;
-      --card:        #16161f;
-      --border:      rgba(255,255,255,.07);
-      --accent:      #e8c97a;
-      --accent2:     #c0392b;
-      --glow:        rgba(232,201,122,.18);
-      --glow2:       rgba(192,57,43,.18);
-      --text:        #f0ece4;
-      --muted:       #6b6876;
-      --radius:      14px;
-      --transition:  .25s cubic-bezier(.4,0,.2,1);
+      --bg-void:       #07070c;
+      --bg-deep:       #0d0d16;
+      --bg-card:       #13131e;
+      --bg-raised:     #1a1a28;
+      --bg-hover:      #22223a;
+      --gold:          #c9a84c;
+      --gold-bright:   #e8c96a;
+      --gold-dim:      rgba(201,168,76,.15);
+      --red:           #d94f3d;
+      --red-glow:      rgba(217,79,61,.18);
+      --teal:          #2dd4bf;
+      --text-primary:  #f0ede6;
+      --text-secondary:#9d9dba;
+      --text-muted:    #585872;
+      --border:        rgba(255,255,255,.06);
+      --border-gold:   rgba(201,168,76,.3);
+      --radius-sm:     8px;
+      --radius-md:     14px;
+      --radius-lg:     20px;
+      --radius-xl:     28px;
+      --font-display:  'Playfair Display', serif;
+      --font-body:     'Outfit', sans-serif;
+      --shadow-card:   0 8px 32px rgba(0,0,0,.55), 0 1px 0 rgba(255,255,255,.04) inset;
+      --shadow-gold:   0 0 40px rgba(201,168,76,.12);
+      --transition:    all .25s cubic-bezier(.4,0,.2,1);
     }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'DM Sans', sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
+      font-family: var(--font-body);
+      background-color: var(--bg-void);
+      color: var(--text-primary);
       min-height: 100vh;
       overflow-x: hidden;
     }
 
-    /* ── CINEMATIC BACKGROUND ── */
-    .bg-layer {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background:
-        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(232,201,122,.06) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(192,57,43,.05) 0%, transparent 55%),
-        radial-gradient(ellipse 100% 100% at 50% 50%, #0a0a0f 0%, #07070c 100%);
-    }
-    .bg-noise {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .025;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-      background-size: 200px;
+    /* ─── NOISE TEXTURE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: .45;
     }
 
-    /* ── FLOATING WATERMARK ── */
-    .watermark {
-      position: fixed; z-index: 0; pointer-events: none;
-      font-family: 'Bebas Neue', cursive;
-      font-size: clamp(80px, 15vw, 180px);
-      color: rgba(255,255,255,.018);
-      letter-spacing: .08em;
-      white-space: nowrap;
-      animation: drift 40s linear infinite;
-      user-select: none;
+    /* ─── AMBIENT GLOW BLOBS ─── */
+    .ambient {
+      position: fixed; border-radius: 50%; filter: blur(90px);
+      pointer-events: none; z-index: 0; animation: drift 18s ease-in-out infinite alternate;
     }
-    .watermark:nth-child(1) { top: -5%;  left: -5%;  animation-duration: 38s; }
-    .watermark:nth-child(2) { top: 40%;  left: 60%;  animation-duration: 44s; animation-direction: reverse; }
-    .watermark:nth-child(3) { top: 75%;  left: -10%; animation-duration: 32s; }
-    @keyframes drift {
-      0%   { transform: translateY(0)   rotate(-3deg); }
-      50%  { transform: translateY(-40px) rotate(3deg); }
-      100% { transform: translateY(0)   rotate(-3deg); }
-    }
+    .ambient-1 { width: 500px; height: 500px; background: rgba(201,168,76,.04); top: -100px; right: -120px; }
+    .ambient-2 { width: 400px; height: 400px; background: rgba(217,79,61,.04); bottom: 5%; left: -80px; animation-delay: -7s; }
+    @keyframes drift { 0%{transform:translate(0,0) scale(1)} 100%{transform:translate(30px,20px) scale(1.07)} }
 
-    /* ── WRAPPER ── */
+    /* ─── FLOATING WATERMARKS ─── */
+    .floating-text {
+      position: fixed; z-index: 0; font-size: 28px;
+      font-family: var(--font-display); color: rgba(255,255,255,.025);
+      animation: moveRT 30s linear infinite; pointer-events: none;
+      font-weight: 900; letter-spacing: .1em;
+    }
+    @keyframes moveRT { 0%{transform:translateY(-100vh) rotate(0)} 100%{transform:translateY(100vh) rotate(360deg)} }
+
+    /* ─── WRAPPER ─── */
     .wrapper {
       position: relative; z-index: 1;
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 48px 24px 120px;
+      max-width: 680px; margin: 0 auto;
+      padding: 0 24px 120px;
     }
 
-    /* ── HEADER ── */
+    /* ─── HEADER ─── */
     .header {
       text-align: center;
-      margin-bottom: 52px;
-      animation: fadeUp .7s ease both;
+      padding: 56px 0 40px;
     }
     .header-eyebrow {
-      font-family: 'Bebas Neue', cursive;
-      font-size: 12px;
-      letter-spacing: .3em;
-      color: var(--accent);
-      margin-bottom: 10px;
-      opacity: .8;
+      display: inline-block;
+      font-size: 11px; font-weight: 600; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--gold);
+      border: 1px solid var(--border-gold);
+      padding: 5px 14px; border-radius: 999px;
+      margin-bottom: 20px;
+      background: var(--gold-dim);
     }
     .header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(38px, 8vw, 62px);
-      font-weight: 900;
-      line-height: 1;
-      background: linear-gradient(135deg, #f5e8c0 0%, var(--accent) 50%, #c9a94e 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 12px;
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 6vw, 3.6rem);
+      font-weight: 900; line-height: 1.1;
+      color: var(--text-primary);
+      letter-spacing: -.02em;
+    }
+    .header h1 span {
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
     .header-sub {
-      font-size: 14px;
-      color: var(--muted);
-      letter-spacing: .04em;
-    }
-    .header-divider {
-      display: flex; align-items: center; gap: 16px;
-      margin-top: 28px;
-    }
-    .header-divider::before,
-    .header-divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--border), transparent);
-    }
-    .header-divider span {
-      font-size: 18px; color: var(--accent); opacity: .6;
-    }
-
-    /* ── LOGIN CARD ── */
-    .login-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px;
-      margin-bottom: 28px;
-      animation: fadeUp .7s .1s ease both;
-      box-shadow: 0 20px 60px rgba(0,0,0,.4);
-    }
-    .login-card-label {
-      font-size: 11px;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 16px;
-    }
-    .login-row {
-      display: flex;
-      gap: 10px;
-    }
-    .welcome-text {
-      margin-top: 14px;
-      font-size: 13px;
-      color: var(--accent);
+      margin-top: 12px; font-size: 15px;
+      color: var(--text-secondary); font-weight: 300;
       letter-spacing: .02em;
-      min-height: 20px;
-      display: flex;
-      align-items: center;
-      gap: 7px;
     }
-    .welcome-text::before {
-      content: '✦';
-      font-size: 10px;
-      opacity: .7;
-    }
-    .welcome-text:empty::before { display: none; }
 
-    /* ── INPUTS ── */
-    input[type="text"] {
-      flex: 1;
-      padding: 13px 18px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      background: rgba(255,255,255,.04);
+    /* ─── DIVIDER ─── */
+    .divider {
+      height: 1px; width: 100%;
+      background: linear-gradient(90deg, transparent, var(--border-gold), transparent);
+      margin: 32px 0;
+    }
+
+    /* ─── LOGIN CARD ─── */
+    #loginSection {
+      background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text);
-      outline: none;
-      transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+      border-radius: var(--radius-xl);
+      padding: 36px;
+      box-shadow: var(--shadow-card);
+      transition: var(--transition);
     }
-    input[type="text"]::placeholder { color: var(--muted); }
-    input[type="text"]:focus {
-      border-color: rgba(232,201,122,.4);
-      background: rgba(232,201,122,.04);
-      box-shadow: 0 0 0 3px rgba(232,201,122,.08);
-    }
-    input[type="text"]:disabled {
-      opacity: .35;
-      cursor: not-allowed;
+    #loginSection:hover { box-shadow: var(--shadow-card), var(--shadow-gold); }
+
+    .section-label {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .18em;
+      color: var(--text-muted); margin-bottom: 18px;
     }
 
-    /* ── BUTTONS ── */
-    .btn {
-      padding: 13px 22px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: .04em;
-      border: none;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: all var(--transition);
+    .input-row {
+      display: flex; gap: 12px; align-items: stretch;
+    }
+    .input-wrap {
+      flex: 1; position: relative;
+    }
+    .input-wrap svg {
+      position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted); pointer-events: none;
+      transition: var(--transition);
+    }
+
+    input[type="text"] {
+      width: 100%; padding: 13px 14px 13px 42px;
+      font-family: var(--font-body); font-size: 14px; font-weight: 400;
+      background: var(--bg-raised); color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      outline: none; transition: var(--transition);
+    }
+    input[type="text"]::placeholder { color: var(--text-muted); }
+    input[type="text"]:focus {
+      border-color: var(--gold);
+      background: var(--bg-hover);
+      box-shadow: 0 0 0 3px rgba(201,168,76,.12);
+    }
+    input[type="text"]:focus + svg,
+    .input-wrap:focus-within svg { color: var(--gold); }
+
+    button {
+      font-family: var(--font-body); font-size: 13px; font-weight: 600;
+      letter-spacing: .04em; cursor: pointer;
+      border: none; border-radius: var(--radius-md);
+      padding: 13px 22px; transition: var(--transition);
       white-space: nowrap;
     }
+
     .btn-primary {
-      background: linear-gradient(135deg, #e8c97a, #c9a94e);
-      color: #0a0a0f;
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      color: #0d0d0d;
     }
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(232,201,122,.35);
-    }
+    .btn-primary:hover { filter: brightness(1.12); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(201,168,76,.35); }
     .btn-primary:active { transform: translateY(0); }
-    .btn-ghost {
-      background: rgba(255,255,255,.05);
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .btn-ghost:hover {
-      background: rgba(255,255,255,.09);
-      border-color: rgba(255,255,255,.12);
-    }
+
     .btn-danger {
-      background: transparent;
-      color: #c0392b;
-      border: 1px solid rgba(192,57,43,.3);
-      padding: 7px 14px;
-      font-size: 12px;
-      border-radius: 8px;
+      background: transparent; color: var(--text-muted);
+      border: 1px solid transparent;
+      padding: 7px 14px; font-size: 12px;
     }
-    .btn-danger:hover {
-      background: rgba(192,57,43,.15);
-      border-color: rgba(192,57,43,.5);
-    }
+    .btn-danger:hover { background: rgba(217,79,61,.15); color: var(--red); border-color: rgba(217,79,61,.3); }
+
     .btn-telegram {
-      width: 100%;
-      background: linear-gradient(135deg, #229ED9, #1a7fb5);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      font-size: 15px;
-      border-radius: 16px;
-      padding: 16px;
-      text-decoration: none;
+      width: 100%; margin-top: 16px;
+      background: linear-gradient(135deg, #229ED9, #1a88bf);
+      color: #fff; padding: 14px;
+      font-size: 14px; letter-spacing: .05em;
+      border-radius: var(--radius-md);
     }
-    .btn-telegram:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 28px rgba(34,158,217,.3);
+    .btn-telegram:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(34,158,217,.3); }
+
+    /* ─── WELCOME PILL ─── */
+    #welcomeText {
+      font-size: 13px; color: var(--text-secondary);
+      margin-top: 14px; display: none;
+      align-items: center; gap: 10px;
+    }
+    #welcomeText.visible { display: flex; }
+    .welcome-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--teal); flex-shrink: 0;
+      box-shadow: 0 0 8px var(--teal);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    /* ─── ADD SECTION ─── */
+    #addSection {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 28px 36px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 28px;
     }
 
-    /* ── ADD SECTION ── */
-    /* FIX 1: z-index:200 creates a stacking context that sits above the
-       animated list items (which also form stacking contexts via their
-       CSS animations), so the autocomplete dropdown is never hidden behind them. */
-    .add-section {
-      position: relative;
-      z-index: 200;
-      margin-bottom: 32px;
-      animation: fadeUp .7s .2s ease both;
-    }
-    .add-section-label {
-      font-size: 11px;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 12px;
-    }
-    .add-row {
-      display: flex;
-      gap: 10px;
-    }
-
-    /* ── AUTOCOMPLETE ── */
+    /* ─── AUTOCOMPLETE ─── */
     #autocomplete {
-      position: absolute;
-      top: calc(100% + 8px);
-      left: 0;
-      width: calc(100% - 110px);
-      max-height: 280px;
-      overflow-y: auto;
-      background: var(--card);
-      border: 1px solid rgba(255,255,255,.1);
-      border-radius: 16px;
-      box-shadow: 0 24px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.03);
-      z-index: 10000;
-      display: none;
-      overflow-x: hidden;
+      position: absolute; top: calc(100% + 8px); left: 0;
+      width: 100%; max-height: 300px; overflow-y: auto;
+      background: var(--bg-raised);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius-md);
+      box-shadow: 0 16px 48px rgba(0,0,0,.65);
+      z-index: 10000; display: none;
     }
     #autocomplete::-webkit-scrollbar { width: 4px; }
     #autocomplete::-webkit-scrollbar-track { background: transparent; }
-    #autocomplete::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
+    #autocomplete::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
+
     .ac-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 10px 14px;
-      cursor: pointer;
-      transition: background var(--transition);
-      border-bottom: 1px solid rgba(255,255,255,.04);
+      display: flex; align-items: center;
+      padding: 10px 14px; cursor: pointer; gap: 14px;
+      transition: var(--transition);
+      border-bottom: 1px solid var(--border);
     }
     .ac-item:last-child { border-bottom: none; }
-    .ac-item:hover { background: rgba(232,201,122,.06); }
+    .ac-item:hover { background: var(--bg-hover); }
     .ac-item img {
-      width: 42px; height: 63px;
-      object-fit: cover;
-      border-radius: 6px;
-      flex-shrink: 0;
+      width: 44px; height: 66px; object-fit: cover;
+      border-radius: var(--radius-sm); flex-shrink: 0;
       box-shadow: 0 4px 12px rgba(0,0,0,.4);
     }
-    .ac-item-info { flex: 1; overflow: hidden; }
-    .ac-item-title {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .ac-item-type {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 3px;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-    }
+    .ac-item-info { flex: 1; }
+    .ac-item-title { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+    .ac-item-year { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 
-    /* ── STATS BAR ── */
+    /* ─── STATS BAR ─── */
     .stats-bar {
-      display: flex;
-      gap: 2px;
-      margin-bottom: 24px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 20px;
-      animation: fadeUp .7s .25s ease both;
-    }
-    .stat {
-      flex: 1;
-      text-align: center;
-    }
-    .stat + .stat {
-      border-left: 1px solid var(--border);
-    }
-    .stat-value {
-      font-family: 'Playfair Display', serif;
-      font-size: 26px;
-      font-weight: 700;
-      color: var(--accent);
-      line-height: 1;
-    }
-    .stat-label {
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      margin-top: 4px;
-    }
-
-    /* ── LIST ── */
-    .section-label {
-      font-size: 11px;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 14px;
-      animation: fadeUp .7s .3s ease both;
-    }
-    #seriesList {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    /* ── LIST ITEM ── */
-    li.series-item {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      gap: 0;
-      overflow: hidden;
-      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
-      animation: slideIn .35s ease both;
-      box-shadow: 0 4px 20px rgba(0,0,0,.25);
-      position: relative;
-    }
-    li.series-item::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 3px;
-      background: linear-gradient(180deg, var(--accent), transparent);
-      opacity: 0;
-      transition: opacity var(--transition);
-    }
-    li.series-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 36px rgba(0,0,0,.4);
-      border-color: rgba(255,255,255,.11);
-    }
-    li.series-item:hover::before { opacity: 1; }
-
-    li.series-item.watched {
-      opacity: .5;
-    }
-    li.series-item.watched .item-title {
-      text-decoration: line-through;
-      color: var(--muted);
-    }
-    li.series-item.watched::before {
-      background: linear-gradient(180deg, #4caf50, transparent);
-      opacity: 1;
-    }
-
-    /* poster */
-    .item-poster {
-      width: 64px;
-      height: 96px;
-      object-fit: cover;
-      flex-shrink: 0;
-      display: block;
-    }
-    .item-poster-placeholder {
-      width: 64px;
-      height: 96px;
-      flex-shrink: 0;
-      background: rgba(255,255,255,.04);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-    }
-
-    /* checkbox */
-    .item-check-wrap {
-      padding: 0 16px;
-      flex-shrink: 0;
-    }
-    .item-check {
-      appearance: none;
-      width: 20px; height: 20px;
-      border: 2px solid rgba(255,255,255,.2);
-      border-radius: 50%;
-      cursor: pointer;
-      position: relative;
-      transition: all var(--transition);
-      flex-shrink: 0;
-    }
-    .item-check:checked {
-      background: #4caf50;
-      border-color: #4caf50;
-    }
-    .item-check:checked::after {
-      content: '✓';
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 11px;
-      line-height: 18px;
-      text-align: center;
-      width: 100%;
-    }
-    .item-check:hover { border-color: var(--accent); }
-
-    /* title */
-    .item-body {
-      flex: 1;
-      padding: 14px 12px 14px 0;
-      min-width: 0;
-    }
-    .item-title {
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      transition: color var(--transition);
-    }
-    .item-meta {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 4px;
-      text-transform: uppercase;
-      letter-spacing: .07em;
-    }
-
-    /* delete */
-    .item-actions {
-      padding: 0 16px;
-      flex-shrink: 0;
-    }
-
-    /* ── TELEGRAM SECTION ── */
-    .telegram-section {
-      margin-top: 44px;
-      animation: fadeUp .7s .4s ease both;
-    }
-    .telegram-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 28px;
-      text-align: center;
-    }
-    .telegram-card-eyebrow {
-      font-size: 11px;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-    .telegram-card-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 20px;
-      margin-bottom: 6px;
-      color: var(--text);
-    }
-    .telegram-card-sub {
-      font-size: 13px;
-      color: var(--muted);
+      display: flex; align-items: center; gap: 20px;
       margin-bottom: 20px;
     }
+    .stat-pill {
+      font-size: 12px; font-weight: 500;
+      color: var(--text-secondary);
+    }
+    .stat-pill strong { color: var(--gold-bright); font-weight: 700; }
+    .progress-track {
+      flex: 1; height: 3px;
+      background: var(--bg-raised); border-radius: 99px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+      border-radius: 99px; transition: width .6s cubic-bezier(.4,0,.2,1);
+    }
 
-    /* ── EMPTY STATE ── */
+    /* ─── SERIES LIST ─── */
+    #seriesList { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+
+    li {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex; align-items: center; gap: 14px;
+      box-shadow: var(--shadow-card);
+      transition: var(--transition);
+      animation: slideIn .3s cubic-bezier(.4,0,.2,1) both;
+    }
+    li:hover {
+      border-color: rgba(201,168,76,.2);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card), 0 8px 24px rgba(0,0,0,.3);
+    }
+    @keyframes slideIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+    li .poster-thumb {
+      width: 56px; height: 84px; object-fit: cover;
+      border-radius: 8px; flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,.5);
+    }
+
+    .item-body { flex: 1; min-width: 0; }
+    .item-title {
+      font-size: 15px; font-weight: 500;
+      color: var(--text-primary);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      transition: var(--transition);
+    }
+    .item-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; margin-top: 5px;
+      color: var(--text-muted);
+    }
+    .badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--text-muted); transition: var(--transition);
+    }
+
+    /* ─── CUSTOM CHECKBOX ─── */
+    .check-wrap {
+      position: relative; width: 22px; height: 22px;
+      flex-shrink: 0;
+    }
+    .check-wrap input[type="checkbox"] {
+      position: absolute; opacity: 0; width: 100%; height: 100%;
+      cursor: pointer; z-index: 2; margin: 0; padding: 0;
+      top: 0; left: 0;
+    }
+    .check-box {
+      width: 22px; height: 22px; border-radius: 6px;
+      border: 2px solid var(--text-muted);
+      background: transparent; transition: var(--transition);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .check-box svg { opacity: 0; transition: var(--transition); }
+    .check-wrap input:checked ~ .check-box {
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      border-color: var(--gold);
+    }
+    .check-wrap input:checked ~ .check-box svg { opacity: 1; }
+
+    /* Watched state */
+    li.watched .item-title {
+      text-decoration: line-through; color: var(--text-muted);
+    }
+    li.watched .badge-dot { background: var(--teal); }
+    li.watched .item-badge { color: var(--teal); }
+    li.watched .item-badge::after { content: 'Watched'; }
+    li:not(.watched) .item-badge::after { content: 'Unwatched'; }
+
+    /* ─── EMPTY STATE ─── */
     .empty-state {
-      text-align: center;
-      padding: 52px 20px;
-      color: var(--muted);
-      animation: fadeUp .5s ease both;
+      text-align: center; padding: 60px 20px;
+      color: var(--text-muted);
+      display: none;
     }
-    .empty-state-icon {
-      font-size: 48px;
+    .empty-state.visible { display: block; }
+    .empty-icon {
+      width: 64px; height: 64px; margin: 0 auto 20px;
+      border: 2px dashed var(--text-muted);
+      border-radius: 16px; display: flex; align-items: center; justify-content: center;
+      opacity: .4;
+    }
+    .empty-state p { font-size: 15px; }
+    .empty-state span { font-size: 13px; color: var(--text-muted); opacity: .7; display: block; margin-top: 6px; }
+
+    /* ─── BANNER ─── */
+    .rt-banner {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%);
+      padding: 14px 28px;
+      background: rgba(10,10,16,.92);
+      border-radius: 999px;
+      border: 1px solid var(--border-gold);
+      box-shadow: 0 8px 32px rgba(0,0,0,.5), var(--shadow-gold);
+      color: #fff; font-family: var(--font-body);
+      text-align: center; z-index: 9999;
+      animation: lightning-in 4s ease-out, show-then-hide 10s ease forwards;
+      pointer-events: none; backdrop-filter: blur(12px);
+    }
+    .rt-glow {
+      font-size: 13px; color: var(--text-secondary);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .rt-glow strong {
+      font-family: var(--font-display);
+      font-size: 17px; font-weight: 700;
+      color: var(--gold-bright);
+      text-shadow: 0 0 12px rgba(232,201,106,.5);
+    }
+    @keyframes lightning-in {
+      0%{opacity:0;transform:translateX(-50%) scale(.9)}
+      20%{opacity:1;transform:translateX(-50%) scale(1);filter:brightness(1.5)}
+      100%{filter:brightness(1)}
+    }
+    @keyframes show-then-hide { 0%,80%{opacity:1} 100%{opacity:0;visibility:hidden} }
+
+    /* ─── LIST SECTION HEADER ─── */
+    .list-header {
+      display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 16px;
-      opacity: .35;
     }
-    .empty-state-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 20px;
-      color: rgba(240,236,228,.4);
-      margin-bottom: 8px;
-    }
-    .empty-state-sub { font-size: 13px; }
-
-    /* ── FOOTER ── */
-    .footer {
-      text-align: center;
-      margin-top: 40px;
-      font-size: 11px;
-      color: rgba(107,104,118,.5);
-      letter-spacing: .1em;
-      text-transform: uppercase;
+    .list-title {
+      font-family: var(--font-display);
+      font-size: 22px; font-weight: 700;
+      color: var(--text-primary);
     }
 
-    /* ── ANIMATIONS ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-12px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 480px) {
-      .wrapper { padding: 32px 16px 100px; }
-      .login-row { flex-direction: column; }
-      .login-row input { width: 100%; }
-      .item-poster, .item-poster-placeholder { width: 52px; height: 78px; }
-    }
-
-    /* ── SCROLLBAR ── */
+    /* ─── SCROLLBAR ─── */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb { background: var(--bg-raised); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* ─── LOCKED STATE ─── */
+    #addSection.locked { opacity: .5; pointer-events: none; }
+
+    /* ─── RESPONSIVE ─── */
+    @media(max-width:520px){
+      .wrapper{padding:0 16px 120px}
+      #loginSection,#addSection{padding:24px 20px}
+      .header{padding:36px 0 28px}
+    }
   </style>
 </head>
 <body>
 
-  <!-- Background -->
-  <div class="bg-layer"></div>
-  <div class="bg-noise"></div>
+  <!-- Ambient blobs -->
+  <div class="ambient ambient-1"></div>
+  <div class="ambient ambient-2"></div>
 
-  <!-- Watermarks -->
-  <div class="watermark">ROTWAVE</div>
-  <div class="watermark">ROTWAVE</div>
-  <div class="watermark">ROTWAVE</div>
+  <!-- Floating watermarks -->
+  <div class="floating-text" style="top:10%;left:10%">ROTWAVE</div>
+  <div class="floating-text" style="top:30%;left:70%">ROTWAVE</div>
+  <div class="floating-text" style="top:60%;left:40%">ROTWAVE</div>
+  <div class="floating-text" style="top:80%;left:20%">ROTWAVE</div>
 
   <div class="wrapper">
 
     <!-- Header -->
-    <header class="header">
-      <div class="header-eyebrow">✦ &nbsp;Your Personal Cinema &nbsp;✦</div>
-      <h1>ROTWAVE</h1>
-      <p class="header-sub">Track every series, film &amp; obsession</p>
-      <div class="header-divider"><span></span></div>
-    </header>
-
-    <!-- Login -->
-    <div class="login-card">
-      <div class="login-card-label">Sign In / Register</div>
-      <div class="login-row">
-        <input type="text" id="usernameInput" placeholder="Your username…">
-        <button class="btn btn-primary" onclick="loginUser()">Enter</button>
-      </div>
-      <p id="welcomeText" class="welcome-text"></p>
+    <div class="header">
+      <div class="header-eyebrow">RTSTUDIOS</div>
+      <h1>Your <span>Watchlist</span></h1>
+      <p class="header-sub">Track every series. Never lose your place.</p>
     </div>
 
-    <!-- Stats -->
-    <div class="stats-bar" id="statsBar" style="display:none;">
-      <div class="stat">
-        <div class="stat-value" id="statTotal">0</div>
-        <div class="stat-label">Total</div>
+    <!-- Login Card -->
+    <div id="loginSection">
+      <div class="section-label">Sign In or Register</div>
+      <div class="input-row">
+        <div class="input-wrap">
+          <input type="text" id="usernameInput" placeholder="Your username..." autocomplete="off">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <button class="btn-primary" onclick="loginUser()">Enter</button>
       </div>
-      <div class="stat">
-        <div class="stat-value" id="statWatched">0</div>
-        <div class="stat-label">Watched</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value" id="statLeft">0</div>
-        <div class="stat-label">To Watch</div>
+      <div id="welcomeText">
+        <span class="welcome-dot"></span>
+        <span id="welcomeInner"></span>
       </div>
     </div>
 
-    <!-- Add Series -->
-    <div class="add-section">
-      <div class="add-section-label">Add to Watchlist</div>
-      <div class="add-row" style="position:relative;">
-        <input type="text" id="seriesInput" placeholder="Search for a series or film…" disabled autocomplete="off">
+    <div class="divider"></div>
+
+    <!-- Add Section -->
+    <div id="addSection" class="locked">
+      <div class="section-label">Add to Watchlist</div>
+      <div style="position:relative">
+        <div class="input-row">
+          <div class="input-wrap" style="flex:1">
+            <input type="text" id="seriesInput" placeholder="Search for a series or movie..." disabled autocomplete="off">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <button class="btn-primary" onclick="addSeries()">Add</button>
+        </div>
         <div id="autocomplete"></div>
-        <button class="btn btn-primary" onclick="addSeries()">+ Add</button>
       </div>
     </div>
 
-    <!-- List -->
-    <div class="section-label">My Watchlist</div>
-    <ul id="seriesList"></ul>
-
-    <!-- Empty state (injected by JS) -->
-
-    <!-- Telegram -->
-    <div class="telegram-section">
-      <div class="telegram-card">
-        <div class="telegram-card-eyebrow">Join the Community</div>
-        <div class="telegram-card-title">ROTWAVE Telegram</div>
-        <div class="telegram-card-sub">Get notified about new releases, shows &amp; updates.</div>
-        <a href="https://t.me/rtmoviesera" target="_blank" class="btn btn-telegram">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
-          Join Telegram Channel
-        </a>
+    <!-- List Section -->
+    <div id="listSection" style="display:none">
+      <div class="list-header">
+        <span class="list-title">My Watchlist</span>
       </div>
+
+      <!-- Stats Bar -->
+      <div class="stats-bar">
+        <div class="stat-pill"><strong id="statWatched">0</strong> watched</div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+        <div class="stat-pill"><strong id="statTotal">0</strong> total</div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 17h5M17 7h5"/></svg>
+        </div>
+        <p>Nothing added yet</p>
+        <span>Search for a title above to get started</span>
+      </div>
+
+      <ul id="seriesList"></ul>
+
+      <!-- Telegram CTA -->
+      <a href="https://t.me/rtmoviesera" target="_blank" style="text-decoration:none">
+        <button class="btn-telegram">Join the ROTWAVE Telegram Channel</button>
+      </a>
     </div>
 
-    <div class="footer">© ROTWAVE · All Rights Reserved</div>
   </div>
 
+  <!-- Banner -->
+  <div class="rt-banner">
+    <div class="rt-glow">
+      <span>Sponsored by</span>
+      <strong>ROTWAVE</strong>
+    </div>
+  </div>
 
   <script>
     const TMDB_KEY = "276ce1441c92d4989b5a0080e47e0633";
-    const IMG_BASE = "https://image.tmdb.org/t/p/w92";
-    const API_BASE = "https://rtwatch-backend.onrender.com";
+    const IMG_BASE  = "https://image.tmdb.org/t/p/w92";
+    const API_BASE  = "https://rtwatch-backend.onrender.com";
 
     let currentUser = null;
     let authToken   = null;
@@ -680,41 +537,24 @@
     const inputBox   = document.getElementById("seriesInput");
     const acBox      = document.getElementById("autocomplete");
 
-    /* ── STATS ── */
+    /* ─── STATS ─── */
     function updateStats() {
-      const items    = seriesList.querySelectorAll("li.series-item");
-      const watched  = seriesList.querySelectorAll("li.series-item.watched");
-      const total    = items.length;
-      const wCount   = watched.length;
-      const left     = total - wCount;
-
+      const items   = seriesList.querySelectorAll("li");
+      const total   = items.length;
+      const watched = [...items].filter(li => li.classList.contains("watched")).length;
+      document.getElementById("statWatched").textContent = watched;
       document.getElementById("statTotal").textContent   = total;
-      document.getElementById("statWatched").textContent = wCount;
-      document.getElementById("statLeft").textContent    = left;
-      document.getElementById("statsBar").style.display  = total > 0 ? "flex" : "none";
-
-      // empty state
-      const existing = document.getElementById("emptyState");
-      if (total === 0) {
-        if (!existing) {
-          const d = document.createElement("div");
-          d.id = "emptyState";
-          d.className = "empty-state";
-          d.innerHTML = `<div class="empty-state-icon">🎬</div>
-            <div class="empty-state-title">Nothing here yet</div>
-            <div class="empty-state-sub">Search for a series or film above to get started</div>`;
-          seriesList.after(d);
-        }
-      } else {
-        if (existing) existing.remove();
-      }
+      const pct = total ? (watched / total * 100).toFixed(0) : 0;
+      document.getElementById("progressFill").style.width = pct + "%";
+      const empty = document.getElementById("emptyState");
+      empty.classList.toggle("visible", total === 0);
     }
 
-    /* ── LOGIN ── */
+    /* ─── ACCOUNT ─── */
     async function loginUser() {
       const username = document.getElementById("usernameInput").value.trim();
       if (!username) return;
-      const password = prompt(`Hi ${username}! Enter your password\n(A new account will be created if you're new):`);
+      const password = prompt(`Welcome ${username}! Enter your password (a new account will be created if needed):`);
       if (!password) return;
 
       try {
@@ -728,18 +568,24 @@
 
         authToken   = data.token;
         currentUser = data.username;
-        document.getElementById("welcomeText").textContent = `Logged in as ${username}`;
+
+        const wt = document.getElementById("welcomeText");
+        document.getElementById("welcomeInner").textContent = `Signed in as ${username} — your list syncs automatically.`;
+        wt.classList.add("visible");
+
+        document.getElementById("addSection").classList.remove("locked");
         inputBox.disabled = false;
+        document.getElementById("listSection").style.display = "block";
         await loadList();
       } catch(e) { console.error(e); alert("Server error"); }
     }
 
-    /* ── AUTOCOMPLETE ── */
+    /* ─── AUTOCOMPLETE ─── */
     let debounceTimer;
     inputBox.addEventListener("input", () => {
       const q = inputBox.value.trim();
       clearTimeout(debounceTimer);
-      if (!q) return (acBox.style.display = "none");
+      if (!q) return acBox.style.display = "none";
       debounceTimer = setTimeout(() => fetchSuggestions(q), 350);
     });
 
@@ -749,25 +595,20 @@
         const res  = await fetch(url);
         const data = await res.json();
         acBox.innerHTML = "";
-        data.results.filter(i => i.poster_path).slice(0,7).forEach(item => {
-          const div = document.createElement("div");
+        data.results.slice(0, 7).forEach(item => {
+          if (!item.poster_path) return;
+          const year = (item.release_date || item.first_air_date || "").slice(0, 4);
+          const div  = document.createElement("div");
           div.className = "ac-item";
-          const type = item.media_type === "tv" ? "TV Series" : "Film";
           div.innerHTML = `
             <img src="${IMG_BASE}${item.poster_path}" alt="">
             <div class="ac-item-info">
               <div class="ac-item-title">${item.title || item.name}</div>
-              <div class="ac-item-type">${type}</div>
+              ${year ? `<div class="ac-item-year">${year}</div>` : ""}
             </div>`;
-
-          /* FIX 2: Use mousedown + preventDefault instead of click.
-             This fires BEFORE the input loses focus, so the document
-             mousedown listener below never hides the dropdown first. */
-          div.addEventListener("mousedown", (e) => {
-            e.preventDefault(); // keeps input focused; prevents premature hide
+          div.addEventListener("click", () => {
             inputBox.value = item.title || item.name;
-            inputBox.dataset.poster = `https://image.tmdb.org/t/p/w185${item.poster_path}`;
-            inputBox.dataset.type   = type;
+            inputBox.dataset.poster = IMG_BASE + item.poster_path;
             acBox.style.display = "none";
           });
           acBox.appendChild(div);
@@ -776,123 +617,111 @@
       } catch(e) { console.error(e); }
     }
 
-    /* FIX 2 (cont): Also switch the outside-click dismissal to mousedown
-       so it doesn't race against the ac-item mousedown above. */
-    document.addEventListener("mousedown", e => {
+    document.addEventListener("click", e => {
       if (!acBox.contains(e.target) && e.target !== inputBox) acBox.style.display = "none";
     });
 
-    /* ── BUILD LIST ITEM ── */
-    function buildItem(item, animate = true) {
-      const li = document.createElement("li");
-      li.className = "series-item" + (item.watched ? " watched" : "");
-      if (!animate) li.style.animation = "none";
-
-      // Poster
-      if (item.poster) {
-        const img = document.createElement("img");
-        img.src = item.poster;
-        img.className = "item-poster";
-        img.alt = item.name;
-        li.appendChild(img);
-      } else {
-        const ph = document.createElement("div");
-        ph.className = "item-poster-placeholder";
-        ph.textContent = "🎬";
-        li.appendChild(ph);
-      }
-
-      // Checkbox
+    /* ─── BUILD LI ─── */
+    function buildItem(name, watched, poster) {
+      const li        = document.createElement("li");
       const checkWrap = document.createElement("div");
-      checkWrap.className = "item-check-wrap";
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.className = "item-check";
-      checkbox.checked = item.watched;
-      checkbox.addEventListener("change", () => {
-        li.classList.toggle("watched", checkbox.checked);
-        updateStats();
-        saveList();
-      });
-      checkWrap.appendChild(checkbox);
-      li.appendChild(checkWrap);
-
-      // Body
-      const body = document.createElement("div");
-      body.className = "item-body";
-      const title = document.createElement("div");
-      title.className = "item-title";
-      title.textContent = item.name;
-      body.appendChild(title);
-      if (item.type) {
-        const meta = document.createElement("div");
-        meta.className = "item-meta";
-        meta.textContent = item.type;
-        body.appendChild(meta);
-      }
-      li.appendChild(body);
-
-      // Actions
-      const actions = document.createElement("div");
-      actions.className = "item-actions";
+      const checkbox  = document.createElement("input");
+      const checkBox  = document.createElement("div");
+      const checkSvg  = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      const itemBody  = document.createElement("div");
+      const titleEl   = document.createElement("div");
+      const badgeEl   = document.createElement("div");
       const deleteBtn = document.createElement("button");
-      deleteBtn.className = "btn btn-danger";
+
+      /* Poster */
+      if (poster) {
+        const img = document.createElement("img");
+        img.src = poster;
+        img.className = "poster-thumb";
+        li.appendChild(img);
+      }
+
+      /* Checkbox */
+      checkbox.type = "checkbox";
+      checkbox.checked = watched;
+      checkSvg.setAttribute("xmlns","http://www.w3.org/2000/svg");
+      checkSvg.setAttribute("width","12"); checkSvg.setAttribute("height","12");
+      checkSvg.setAttribute("viewBox","0 0 24 24");
+      checkSvg.setAttribute("fill","none");
+      checkSvg.setAttribute("stroke","#0d0d0d");
+      checkSvg.setAttribute("stroke-width","3");
+      checkSvg.setAttribute("stroke-linecap","round");
+      checkSvg.setAttribute("stroke-linejoin","round");
+      checkSvg.innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+      checkBox.className = "check-box";
+      checkBox.appendChild(checkSvg);
+      checkWrap.className = "check-wrap";
+      checkWrap.appendChild(checkbox);
+      checkWrap.appendChild(checkBox);
+
+      /* Text */
+      titleEl.className = "item-title";
+      titleEl.textContent = name;
+      badgeEl.className = "item-badge";
+      const dot = document.createElement("span");
+      dot.className = "badge-dot";
+      badgeEl.appendChild(dot);
+      itemBody.className = "item-body";
+      itemBody.appendChild(titleEl);
+      itemBody.appendChild(badgeEl);
+
+      /* Delete */
       deleteBtn.textContent = "Remove";
+      deleteBtn.className = "btn-danger";
       deleteBtn.addEventListener("click", () => {
         li.style.opacity = "0";
-        li.style.transform = "scale(.95)";
-        li.style.transition = "all .2s ease";
-        setTimeout(() => { li.remove(); updateStats(); saveList(); }, 200);
+        li.style.transform = "translateX(20px)";
+        setTimeout(() => { li.remove(); saveList(); updateStats(); }, 250);
       });
-      actions.appendChild(deleteBtn);
-      li.appendChild(actions);
 
+      /* State */
+      if (watched) li.classList.add("watched");
+
+      checkbox.addEventListener("change", () => {
+        li.classList.toggle("watched", checkbox.checked);
+        saveList(); updateStats();
+      });
+
+      li.append(checkWrap, itemBody, deleteBtn);
       return li;
     }
 
-    /* ── ADD ── */
+    /* ─── ADD SERIES ─── */
     async function addSeries() {
       const name = inputBox.value.trim();
       if (!name) return;
       const poster = inputBox.dataset.poster || "";
-      const type   = inputBox.dataset.type   || "";
-      const li = buildItem({ name, watched: false, poster, type });
+      const li = buildItem(name, false, poster);
       seriesList.appendChild(li);
       inputBox.value = "";
       delete inputBox.dataset.poster;
-      delete inputBox.dataset.type;
       acBox.style.display = "none";
       updateStats();
       await saveList();
     }
 
-    /* ── ENTER KEY ── */
-    inputBox.addEventListener("keydown", e => {
-      if (e.key === "Enter") addSeries();
-    });
-
-    /* ── SAVE ── */
+    /* ─── STORAGE ─── */
     async function saveList() {
       if (!currentUser || !authToken) return;
-      const data = [...seriesList.querySelectorAll("li.series-item")].map(li => ({
+      const data = [...seriesList.querySelectorAll("li")].map(li => ({
         name:    li.querySelector(".item-title").textContent.trim(),
-        watched: li.querySelector(".item-check").checked,
-        poster:  li.querySelector(".item-poster")?.src || "",
-        type:    li.querySelector(".item-meta")?.textContent || ""
+        watched: li.querySelector("input[type='checkbox']").checked,
+        poster:  (li.querySelector(".poster-thumb") || {}).src || ""
       }));
       try {
         await fetch(`${API_BASE}/api/watchlist`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${authToken}`
-          },
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${authToken}` },
           body: JSON.stringify({ watchlist: data })
         });
       } catch(e) { console.error(e); }
     }
 
-    /* ── LOAD ── */
     async function loadList() {
       seriesList.innerHTML = "";
       if (!currentUser || !authToken) return;
@@ -902,15 +731,12 @@
         });
         const data = await res.json();
         (data.watchlist || []).forEach(item => {
-          const li = buildItem(item, false);
+          const li = buildItem(item.name, item.watched, item.poster);
           seriesList.appendChild(li);
         });
+        updateStats();
       } catch(e) { console.error(e); }
-      updateStats();
     }
-
-    /* Initial empty state */
-    updateStats();
   </script>
 </body>
 </html>
