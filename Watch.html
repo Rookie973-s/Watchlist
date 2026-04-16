@@ -255,8 +255,12 @@
     }
 
     /* ── ADD SECTION ── */
+    /* FIX 1: z-index:200 creates a stacking context that sits above the
+       animated list items (which also form stacking contexts via their
+       CSS animations), so the autocomplete dropdown is never hidden behind them. */
     .add-section {
       position: relative;
+      z-index: 200;
       margin-bottom: 32px;
       animation: fadeUp .7s .2s ease both;
     }
@@ -755,7 +759,12 @@
               <div class="ac-item-title">${item.title || item.name}</div>
               <div class="ac-item-type">${type}</div>
             </div>`;
-          div.addEventListener("click", () => {
+
+          /* FIX 2: Use mousedown + preventDefault instead of click.
+             This fires BEFORE the input loses focus, so the document
+             mousedown listener below never hides the dropdown first. */
+          div.addEventListener("mousedown", (e) => {
+            e.preventDefault(); // keeps input focused; prevents premature hide
             inputBox.value = item.title || item.name;
             inputBox.dataset.poster = `https://image.tmdb.org/t/p/w185${item.poster_path}`;
             inputBox.dataset.type   = type;
@@ -766,7 +775,10 @@
         acBox.style.display = acBox.childElementCount ? "block" : "none";
       } catch(e) { console.error(e); }
     }
-    document.addEventListener("click", e => {
+
+    /* FIX 2 (cont): Also switch the outside-click dismissal to mousedown
+       so it doesn't race against the ac-item mousedown above. */
+    document.addEventListener("mousedown", e => {
       if (!acBox.contains(e.target) && e.target !== inputBox) acBox.style.display = "none";
     });
 
