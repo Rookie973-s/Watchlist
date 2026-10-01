@@ -274,7 +274,7 @@ async function migrateOld() {
 
 /* ---------- Telegram download request ---------- */
 async function requestDownload(it) {
-  const msg = `Hi RT Movies Talk 👋\nPlease upload: ${it.name}${it.year ? ` (${it.year})` : ""} – ${isTv(it) ? "Series" : "Movie"}\n(from my RTSTUDIOS watchlist)`;
+  const msg = `${it.name}${it.year ? `${it.year}` : ""} ${isTv(it) ? }`;
   try { await navigator.clipboard.writeText(msg); toast("Request copied. Paste it in the group chat."); }
   catch (e) { toast("Opening Telegram. Type the title in the group."); }
   window.open(TG, "_blank", "noopener");
