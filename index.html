@@ -14,7 +14,7 @@
 <style>
 :root{
   --bg:#08080a; --panel:#141417; --raised:#1d1d22; --line:rgba(255,255,255,.08);
-  --red:#e50914; --red-hi:#ff2a36; --text:#f2f2f2; --dim:#9b9ba6; --mute:#62626d; --ok:#2dd4a0;
+  --red:#630102; --red-hi:#ff2a36; --text:#f2f2f2; --dim:#9b9ba6; --mute:#62626d; --ok:#2dd4a0;
   --font:'Outfit',system-ui,sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -28,35 +28,76 @@ button{cursor:pointer;border:0;background:none}
 /* top bar */
 .top{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:28px;padding:14px 4vw;
   background:linear-gradient(#08080a 55%,rgba(8,8,10,.85));backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.brand{font-weight:800;font-size:22px;letter-spacing:.06em;color:var(--red)}
+.brand{font-weight:800;font-size:22px;letter-spacing:.06em;color:var(--red); }
 .tabs{display:flex;gap:4px;flex:1}
 .tab{padding:8px 14px;border-radius:8px;font-size:14px;font-weight:500;color:var(--dim)}
 .tab:hover{color:var(--text)}
-.tab.on{color:#fff;background:var(--raised)}
-.user{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--dim)}
-.avatar{width:32px;height:32px;border-radius:50%;background:var(--red);color:#fff;font-weight:700;display:grid;place-items:center;text-transform:uppercase}
+.tab.on{color:#fff;background:var(--raised);  box-shadow:
+        0 6px 0 rgba(0, 0, 0, 0.9),
+        0 8px 14px rgba(0, 0, 0, 0.8),
+        inset 0 2px 2px rgba(255, 255, 255, 0.12),
+        inset 0 -3px 4px rgba(0, 0, 0, 0.65);
+
+    transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease,
+        filter 0.12s ease;}
+.user{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--dim);}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--red);color:#fff;font-weight:700;display:grid;place-items:center;text-transform:uppercase;   box-shadow:
+        0 6px 0 rgba(0, 0, 0, 0.9),
+        0 8px 14px rgba(0, 0, 0, 0.8),
+        inset 0 2px 2px rgba(255, 255, 255, 0.12),
+        inset 0 -3px 4px rgba(0, 0, 0, 0.65);
+
+    transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease,
+        filter 0.12s ease;}
 .link{color:var(--dim);font-size:13px;padding:6px 10px;border-radius:8px}
 .link:hover{color:#fff;background:var(--raised)}
 
 main{max-width:1280px;margin:0 auto;padding:28px 4vw 80px}
 
 /* sign in */
-.gate{max-width:380px;margin:9vh auto 0;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:32px}
+.gate{max-width:380px;margin:9vh auto 0;background:var(--panel);border-radius:20px;padding:32px}
 .gate h1{font-size:26px;font-weight:700}
 .gate p{color:var(--dim);font-size:14px;margin:6px 0 22px;line-height:1.5}
-.field{display:block;margin-bottom:14px}
+.field{display:block;margin-bottom:14px; border-radius: 50px;}
 .field span{display:block;font-size:12px;color:var(--dim);margin-bottom:6px}
-input[type=text],input[type=password],select{width:100%;padding:12px 14px;background:var(--raised);border:1px solid var(--line);border-radius:8px;outline:none}
+input[type=text],input[type=password],select{width:100%;padding:12px 14px;background:var(--raised);border-radius:50px;outline:none;  box-shadow:
+        0 6px 0 rgba(0, 0, 0, 0.9),
+        0 8px 14px rgba(0, 0, 0, 0.8),
+        inset 0 2px 2px rgba(255, 255, 255, 0.12),
+        inset 0 -3px 4px rgba(0, 0, 0, 0.65);
+
+    transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease,
+        filter 0.12s ease;
+  }
 input:focus,select:focus{border-color:var(--red)}
 ::placeholder{color:var(--mute)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:8px;font-weight:600;font-size:14px;background:var(--red);color:#fff;transition:background .15s}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:20px;font-weight:600;font-size:14px;background:var(--red);color:#fff;box-shadow:
+        7px 7px 14px rgba(0, 0, 0, 0.95),
+        -4px -4px 10px rgba(255, 255, 255, 0.065),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.065),
+        inset -4px -4px 7px rgba(0, 0, 0, 0.85);}
 .btn:hover{background:var(--red-hi)}
 .btn:disabled{opacity:.55;cursor:wait}
 .btn.wide{width:100%;margin-top:6px}
 .err{color:#ff6b6b;font-size:13px;min-height:18px;margin-top:10px}
 
 /* hero carousel */
-.hero{position:relative;height:clamp(300px,40vw,430px);border-radius:14px;overflow:hidden;margin-bottom:30px;background:var(--panel)}
+.hero{position:relative;height:clamp(300px,40vw,430px);border-radius:14px;overflow:hidden;margin-bottom:30px;background:var(--panel);  box-shadow:
+        0 6px 0 rgba(0, 0, 0, 0.9),
+        0 8px 14px rgba(0, 0, 0, 0.8),
+        inset 0 2px 2px rgba(255, 255, 255, 0.12),
+        inset 0 -3px 4px rgba(0, 0, 0, 0.65);
+
+    transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease,
+        filter 0.12s ease;}
 .hbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%;transition:opacity .45s}
 .hshade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,10,.96) 0%,rgba(8,8,10,.65) 42%,rgba(8,8,10,0) 80%),linear-gradient(0deg,rgba(8,8,10,.85),rgba(8,8,10,0) 45%)}
 .hbody{position:absolute;left:clamp(20px,5vw,56px);right:20px;bottom:clamp(40px,6vw,64px);max-width:540px}
@@ -75,7 +116,16 @@ input:focus,select:focus{border-color:var(--red)}
 
 /* add bar */
 .addbar{position:relative;max-width:640px;margin:0 auto 30px}
-.addbar input{padding:15px 18px 15px 46px;font-size:15px;border-radius:999px;background:var(--panel)}
+.addbar input{padding:15px 18px 15px 46px;font-size:15px;border-radius:1000px;background:var(--panel);   box-shadow:
+        0 6px 0 rgba(0, 0, 0, 0.9),
+        0 8px 14px rgba(0, 0, 0, 0.8),
+        inset 0 2px 2px rgba(255, 255, 255, 0.12),
+        inset 0 -3px 4px rgba(0, 0, 0, 0.65);
+
+    transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease,
+        filter 0.12s ease;}
 .addbar svg{position:absolute;left:17px;top:50%;transform:translateY(-50%);color:var(--mute);pointer-events:none}
 #ac{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:60;max-height:360px;overflow-y:auto;background:var(--raised);border:1px solid var(--line);border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.7)}
 .ac-row{display:flex;gap:14px;align-items:center;padding:10px 14px;width:100%;text-align:left;border-bottom:1px solid var(--line)}
@@ -89,11 +139,24 @@ input:focus,select:focus{border-color:var(--red)}
 /* toolbar */
 .toolbar{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;margin-bottom:16px}
 .group{display:flex;gap:6px;flex-wrap:wrap}
-.chip{padding:7px 16px;border-radius:999px;font-size:13px;font-weight:500;border:1px solid var(--line);color:var(--dim);transition:.15s}
+.chip{padding:7px 16px;border-radius:999px;font-size:13px;font-weight:500;color:var(--dim);box-shadow:
+        7px 7px 14px rgba(0, 0, 0, 0.95),
+        -4px -4px 10px rgba(255, 255, 255, 0.065),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.065),
+        inset -4px -4px 7px rgba(0, 0, 0, 0.85);}
 .chip:hover{color:#fff;border-color:rgba(255,255,255,.25)}
 .chip.on{background:var(--red);border-color:var(--red);color:#fff}
-.sortbox{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);margin-left:auto}
-.sortbox select{width:auto;padding:8px 12px}
+.sortbox{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);margin-left:auto;border-radius:999px;padding:6px 12px;background:var(--panel);  box-shadow:
+        0 6px 0 rgba(0, 0, 0, 0.9),
+        0 8px 14px rgba(0, 0, 0, 0.8),
+        inset 0 2px 2px rgba(255, 255, 255, 0.12),
+        inset 0 -3px 4px rgba(0, 0, 0, 0.65);
+
+    transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease,
+        filter 0.12s ease;}
+.sortbox select{width:auto;padding:8px 12px; border-radius: 7px;}
 .findbox{flex:1 1 200px;max-width:280px}
 .findbox input{padding:9px 14px;border-radius:999px;font-size:13px}
 .stats{display:flex;align-items:center;gap:14px;font-size:13px;color:var(--dim);margin-bottom:30px}
@@ -107,7 +170,16 @@ input:focus,select:focus{border-color:var(--red)}
 .sec h2 small{font-size:13px;font-weight:400;color:var(--mute)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:26px 18px}
 .card{display:flex;flex-direction:column;min-width:0}
-.poster{position:relative;aspect-ratio:2/3;border-radius:10px;overflow:hidden;background:var(--panel);box-shadow:0 10px 24px rgba(0,0,0,.55);transition:transform .2s}
+.poster{position:relative;aspect-ratio:2/3;border-radius:22px;overflow:hidden;background:var(--panel);   box-shadow:
+        7px 7px 14px rgba(0, 0, 0, 0.9),
+        -4px -4px 10px rgba(255, 255, 255, 0.055),
+        inset 2px 2px 4px rgba(255, 255, 255, 0.055),
+        inset -3px -3px 6px rgba(0, 0, 0, 0.75);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease
+}
 .card:hover .poster{transform:translateY(-4px)}
 .poster img{width:100%;height:100%;object-fit:cover;display:block}
 .noimg{height:100%;display:grid;place-items:center;padding:12px;text-align:center;color:var(--mute);font-size:13px}
@@ -117,9 +189,17 @@ input:focus,select:focus{border-color:var(--red)}
 .name{margin-top:10px;font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sub{font-size:12px;color:var(--mute);margin-top:3px}
 .acts{display:flex;gap:6px;margin-top:10px}
-.dl{flex:1;padding:8px 6px;border-radius:7px;background:var(--red);color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px}
+.dl{flex:1;padding:8px 6px;border-radius:10px;background:var(--red);color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:
+        7px 7px 14px rgba(0, 0, 0, 0.9),
+        -4px -4px 10px rgba(255, 80, 80, 0.08),
+        inset 2px 2px 5px rgba(255, 100, 100, 0.16),
+        inset -4px -4px 7px rgba(50, 0, 0, 0.55);}
 .dl:hover{background:var(--red-hi)}
-.ib{width:36px;border-radius:7px;background:var(--raised);color:var(--dim);display:grid;place-items:center}
+.ib{width:36px;border-radius:10px;background:var(--raised);color:var(--dim);display:grid;place-items:center; box-shadow:
+        7px 7px 14px rgba(0, 0, 0, 0.95),
+        -4px -4px 10px rgba(255, 255, 255, 0.065),
+        inset 2px 2px 5px rgba(255, 255, 255, 0.065),
+        inset -4px -4px 7px rgba(0, 0, 0, 0.85);}
 .ib:hover{color:#fff;background:#2b2b33}
 .ib.on{background:var(--ok);color:#04271c}
 .ib.del:hover{background:rgba(255,70,70,.18);color:#ff6b6b}
@@ -146,7 +226,7 @@ input:focus,select:focus{border-color:var(--red)}
 <body>
 
 <header class="top">
-  <div class="brand">RTSTUDIOS</div>
+  <div class="brand">WaveMovies</div>
   <nav class="tabs" id="tabs" hidden>
     <button class="tab on" data-type="all">All</button>
     <button class="tab" data-type="movie">Movies</button>
@@ -350,7 +430,7 @@ function cardHTML(it) {
     <div class="name" title="${esc(it.name)}">${esc(it.name)}</div>
     <div class="sub">${[it.year, added && "Added " + added].filter(Boolean).join(" · ")}</div>
     <div class="acts">
-      <button class="dl" data-act="dl" title="Request this on Telegram"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>Download</button>
+      <button class="dl" data-act="dl" title="Request this on Telegram"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>Request</button>
       <button class="ib${it.watched ? " on" : ""}" data-act="seen" title="${it.watched ? "Mark as unwatched" : "Mark as watched"}" aria-pressed="${!!it.watched}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
       <button class="ib del" data-act="del" title="Remove"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>
     </div></article>`;
