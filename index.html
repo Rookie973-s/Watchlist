@@ -55,6 +55,24 @@ input:focus,select:focus{border-color:var(--red)}
 .btn.wide{width:100%;margin-top:6px}
 .err{color:#ff6b6b;font-size:13px;min-height:18px;margin-top:10px}
 
+/* hero carousel */
+.hero{position:relative;height:clamp(300px,40vw,430px);border-radius:14px;overflow:hidden;margin-bottom:30px;background:var(--panel)}
+.hbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%;transition:opacity .45s}
+.hshade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,10,.96) 0%,rgba(8,8,10,.65) 42%,rgba(8,8,10,0) 80%),linear-gradient(0deg,rgba(8,8,10,.85),rgba(8,8,10,0) 45%)}
+.hbody{position:absolute;left:clamp(20px,5vw,56px);right:20px;bottom:clamp(40px,6vw,64px);max-width:540px}
+.hmeta{font-size:12px;color:var(--dim);margin-bottom:8px}
+.hrate{font-size:13px;margin-bottom:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.hrate b{color:#f5c518}
+.hero h2{font-size:clamp(26px,4.2vw,46px);font-weight:700;line-height:1.1;margin-bottom:12px}
+.hero p{font-size:13px;line-height:1.55;color:#d0d0d6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:18px}
+.hbtns{display:flex;gap:10px;flex-wrap:wrap}
+.btn.dark{background:#000;border:1px solid var(--line)}
+.btn.dark:hover{background:#1a1a1f}
+.hdots{position:absolute;left:0;right:0;bottom:16px;display:flex;justify-content:center;gap:8px}
+.hdots button{width:34px;height:12px;position:relative}
+.hdots button::after{content:"";position:absolute;left:0;right:0;top:5px;height:2px;border-radius:2px;background:rgba(255,255,255,.3);transition:.2s}
+.hdots button.on::after{background:#fff}
+
 /* add bar */
 .addbar{position:relative;max-width:640px;margin:0 auto 30px}
 .addbar input{padding:15px 18px 15px 46px;font-size:15px;border-radius:999px;background:var(--panel)}
@@ -155,6 +173,22 @@ input:focus,select:focus{border-color:var(--red)}
 
   <!-- APP -->
   <div id="app" hidden>
+    <section class="hero" id="hero" hidden aria-label="Recently added">
+      <img class="hbg" id="hBg" alt="">
+      <div class="hshade"></div>
+      <div class="hbody">
+        <div class="hmeta" id="hMeta"></div>
+        <div class="hrate" id="hRate"></div>
+        <h2 id="hTitle"></h2>
+        <p id="hDesc"></p>
+        <div class="hbtns">
+          <button class="btn" id="hDl"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>Download</button>
+          <button class="btn dark" id="hSeen"></button>
+        </div>
+      </div>
+      <div class="hdots" id="hDots"></div>
+    </section>
+
     <div class="addbar">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="addInput" placeholder="Search a movie or series to add" autocomplete="off">
@@ -274,8 +308,7 @@ async function migrateOld() {
 
 /* ---------- Telegram download request ---------- */
 async function requestDownload(it) {
-  const msg = `${it.name}${it.year ? `${it.year}` : ""} ${isTv(it) ? }`;
-  try { await navigator.clipboard.writeText(msg); toast("Request copied. Paste it in the group chat."); }
+  try { await navigator.clipboard.writeText(it.name); toast(`"${it.name}" copied. Paste it in the group chat.`); }
   catch (e) { toast("Opening Telegram. Type the title in the group."); }
   window.open(TG, "_blank", "noopener");
 }
@@ -313,6 +346,7 @@ function cardHTML(it) {
 }
 
 function render() {
+  renderHero();
   const n = S.items.length, w = S.items.filter(i => i.watched).length;
   $("sW").textContent = w; $("sT").textContent = n;
   $("sBar").style.width = (n ? Math.round(w / n * 100) : 0) + "%";
@@ -329,6 +363,81 @@ function render() {
   rows.innerHTML = S.type === "all" ? sec("Movies", movies) + sec("Series", series)
                  : sec(S.type === "tv" ? "Series" : "Movies", list);
 }
+
+/* ---------- hero carousel (latest added titles) ---------- */
+const hero = { items:[], keys:"", idx:0, timer:null, cache:{}, seq:0 };
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+async function heroInfo(it) {
+  const k = keyOf(it);
+  if (hero.cache[k]) return hero.cache[k];
+  let info = {};
+  try {
+    const d = await (await fetch(`https://api.themoviedb.org/3/${isTv(it) ? "tv" : "movie"}/${it.tmdbId}?api_key=${TMDB_KEY}&language=en-US`)).json();
+    const mins = d.runtime || 0, seasons = d.number_of_seasons || 0;
+    info = {
+      bg: d.backdrop_path ? "https://image.tmdb.org/t/p/w1280" + d.backdrop_path : "",
+      overview: d.overview || "",
+      rating: d.vote_average ? d.vote_average.toFixed(1) : "",
+      genres: (d.genres || []).slice(0, 3).map(g => g.name).join(", "),
+      length: isTv(it) ? (seasons ? `${seasons} season${seasons > 1 ? "s" : ""}` : "") : (mins ? `${Math.floor(mins / 60)}h ${mins % 60}m` : "")
+    };
+  } catch (e) {}
+  return (hero.cache[k] = info);
+}
+
+async function showSlide() {
+  const it = hero.items[hero.idx]; if (!it) return;
+  const seq = ++hero.seq;
+  $("hTitle").textContent = it.name;
+  $("hSeen").textContent = it.watched ? "Mark as unwatched" : "Mark as watched";
+  document.querySelectorAll("#hDots button").forEach((b, i) => b.classList.toggle("on", i === hero.idx));
+  const info = await heroInfo(it);
+  if (seq !== hero.seq) return;
+  $("hMeta").textContent = [isTv(it) ? "Series" : "Movie", info.length].filter(Boolean).join(", ");
+  $("hRate").innerHTML = (info.rating ? `<b>★ ${esc(info.rating)}</b>` : "") + `<span>${esc([it.year, info.genres].filter(Boolean).join("  |  "))}</span>`;
+  $("hDesc").textContent = info.overview;
+  const src = info.bg || posterUrl(it.poster), img = $("hBg");
+  if (img.getAttribute("src") !== src) {
+    img.style.opacity = 0;
+    const pre = new Image();
+    pre.onload = pre.onerror = () => { if (seq === hero.seq) { img.src = src; img.style.opacity = 1; } };
+    pre.src = src;
+  }
+}
+
+function startHeroTimer() {
+  clearInterval(hero.timer);
+  if (reduceMotion || hero.items.length < 2) return;
+  hero.timer = setInterval(() => { hero.idx = (hero.idx + 1) % hero.items.length; showSlide(); }, 6500);
+}
+
+function renderHero() {
+  const items = S.items.filter(i => i.tmdbId)
+    .sort((a, b) => ts(b) - ts(a) || b._i - a._i).slice(0, 6);
+  const keys = items.map(keyOf).join("|");
+  $("hero").hidden = !items.length;
+  if (!items.length) { clearInterval(hero.timer); hero.items = []; hero.keys = ""; return; }
+  hero.items = items;
+  if (keys !== hero.keys) {                     // list changed: rebuild dots and restart
+    hero.keys = keys; hero.idx = 0;
+    $("hDots").innerHTML = items.map((it, i) => `<button aria-label="Show ${esc(it.name)}" data-i="${i}"></button>`).join("");
+    startHeroTimer();
+  }
+  showSlide();
+}
+$("hDots").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  hero.idx = +b.dataset.i; showSlide(); startHeroTimer();
+});
+$("hero").addEventListener("mouseenter", () => clearInterval(hero.timer));
+$("hero").addEventListener("mouseleave", startHeroTimer);
+$("hDl").addEventListener("click", () => hero.items[hero.idx] && requestDownload(hero.items[hero.idx]));
+$("hSeen").addEventListener("click", () => {
+  const it = hero.items[hero.idx]; if (!it) return;
+  it.watched = !it.watched; save(); render();
+  toast(it.watched ? "Marked as watched" : "Marked as unwatched");
+});
 
 /* ---------- card actions (event delegation) ---------- */
 $("rows").addEventListener("click", e => {
@@ -417,7 +526,7 @@ function showApp() {
   $("uname").textContent = S.user; $("avatar").textContent = S.user.charAt(0);
 }
 function signOut(expired) {
-  loadSeq++; S.token = S.user = null; S.items = [];
+  loadSeq++; clearInterval(hero.timer); hero.keys = ""; S.token = S.user = null; S.items = [];
   try { localStorage.removeItem("rt_auth"); } catch (e) {}
   $("app").hidden = true; $("tabs").hidden = true; $("user").hidden = true; $("gate").hidden = false;
   $("p").value = "";
