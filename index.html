@@ -1,1053 +1,454 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>RTSTUDIOS Watchlist</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RTSTUDIOS Watchlist</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0MSC72FNTK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date()); gtag('config', 'G-0MSC72FNTK');
+</script>
+<style>
+:root{
+  --bg:#08080a; --panel:#141417; --raised:#1d1d22; --line:rgba(255,255,255,.08);
+  --red:#e50914; --red-hi:#ff2a36; --text:#f2f2f2; --dim:#9b9ba6; --mute:#62626d; --ok:#2dd4a0;
+  --font:'Outfit',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--red-hi);outline-offset:2px}
+[hidden]{display:none!important}
 
-  <!-- Google tag -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0MSC72FNTK"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-0MSC72FNTK');
-  </script>
+/* top bar */
+.top{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:28px;padding:14px 4vw;
+  background:linear-gradient(#08080a 55%,rgba(8,8,10,.85));backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.brand{font-weight:800;font-size:22px;letter-spacing:.06em;color:var(--red)}
+.tabs{display:flex;gap:4px;flex:1}
+.tab{padding:8px 14px;border-radius:8px;font-size:14px;font-weight:500;color:var(--dim)}
+.tab:hover{color:var(--text)}
+.tab.on{color:#fff;background:var(--raised)}
+.user{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--dim)}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--red);color:#fff;font-weight:700;display:grid;place-items:center;text-transform:uppercase}
+.link{color:var(--dim);font-size:13px;padding:6px 10px;border-radius:8px}
+.link:hover{color:#fff;background:var(--raised)}
 
-  <style>
-    /* ════════════════════════════════════════
-       TOKENS
-    ════════════════════════════════════════ */
-    :root {
-      --bg-void:       #07070c;
-      --bg-deep:       #0d0d16;
-      --bg-card:       #12121c;
-      --bg-raised:     #1a1a2a;
-      --bg-hover:      #20203a;
-      --gold:          #c9a84c;
-      --gold-bright:   #e8c96a;
-      --gold-dim:      rgba(201,168,76,.12);
-      --gold-glow:     rgba(201,168,76,.22);
-      --red:           #d94f3d;
-      --red-dim:       rgba(217,79,61,.15);
-      --teal:          #2dd4bf;
-      --teal-dim:      rgba(45,212,191,.12);
-      --indigo:        #6366f1;
-      --text-primary:  #f0ede6;
-      --text-secondary:#8a8aaa;
-      --text-muted:    #52526e;
-      --border:        rgba(255,255,255,.055);
-      --border-gold:   rgba(201,168,76,.28);
-      --radius-sm:     8px;
-      --radius-md:     12px;
-      --radius-lg:     18px;
-      --radius-xl:     24px;
-      --radius-2xl:    32px;
-      --font-display:  'Playfair Display', serif;
-      --font-body:     'Outfit', sans-serif;
-      --shadow-card:   0 4px 24px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.035) inset;
-      --shadow-deep:   0 16px 56px rgba(0,0,0,.7);
-      --shadow-gold:   0 0 48px rgba(201,168,76,.1);
-      --t:             all .22s cubic-bezier(.4,0,.2,1);
-    }
+main{max-width:1280px;margin:0 auto;padding:28px 4vw 80px}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+/* sign in */
+.gate{max-width:380px;margin:9vh auto 0;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:32px}
+.gate h1{font-size:26px;font-weight:700}
+.gate p{color:var(--dim);font-size:14px;margin:6px 0 22px;line-height:1.5}
+.field{display:block;margin-bottom:14px}
+.field span{display:block;font-size:12px;color:var(--dim);margin-bottom:6px}
+input[type=text],input[type=password],select{width:100%;padding:12px 14px;background:var(--raised);border:1px solid var(--line);border-radius:8px;outline:none}
+input:focus,select:focus{border-color:var(--red)}
+::placeholder{color:var(--mute)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:8px;font-weight:600;font-size:14px;background:var(--red);color:#fff;transition:background .15s}
+.btn:hover{background:var(--red-hi)}
+.btn:disabled{opacity:.55;cursor:wait}
+.btn.wide{width:100%;margin-top:6px}
+.err{color:#ff6b6b;font-size:13px;min-height:18px;margin-top:10px}
 
-    body {
-      font-family: var(--font-body);
-      background: var(--bg-void);
-      color: var(--text-primary);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+/* add bar */
+.addbar{position:relative;max-width:640px;margin:0 auto 30px}
+.addbar input{padding:15px 18px 15px 46px;font-size:15px;border-radius:999px;background:var(--panel)}
+.addbar svg{position:absolute;left:17px;top:50%;transform:translateY(-50%);color:var(--mute);pointer-events:none}
+#ac{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:60;max-height:360px;overflow-y:auto;background:var(--raised);border:1px solid var(--line);border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.7)}
+.ac-row{display:flex;gap:14px;align-items:center;padding:10px 14px;width:100%;text-align:left;border-bottom:1px solid var(--line)}
+.ac-row:last-child{border:0}
+.ac-row:hover,.ac-row:focus-visible{background:#26262d}
+.ac-row img{width:40px;height:60px;object-fit:cover;border-radius:5px}
+.ac-t{font-weight:500;font-size:14px}
+.ac-s{font-size:12px;color:var(--dim);margin-top:3px}
+.ac-in{margin-left:auto;font-size:11px;color:var(--ok)}
 
-    /* ── NOISE ── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      opacity: .4;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
-    }
+/* toolbar */
+.toolbar{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;margin-bottom:16px}
+.group{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:7px 16px;border-radius:999px;font-size:13px;font-weight:500;border:1px solid var(--line);color:var(--dim);transition:.15s}
+.chip:hover{color:#fff;border-color:rgba(255,255,255,.25)}
+.chip.on{background:var(--red);border-color:var(--red);color:#fff}
+.sortbox{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);margin-left:auto}
+.sortbox select{width:auto;padding:8px 12px}
+.findbox{flex:1 1 200px;max-width:280px}
+.findbox input{padding:9px 14px;border-radius:999px;font-size:13px}
+.stats{display:flex;align-items:center;gap:14px;font-size:13px;color:var(--dim);margin-bottom:30px}
+.stats b{color:#fff}
+.bar{flex:1;height:3px;border-radius:9px;background:var(--raised);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--red);transition:width .5s}
 
-    /* ── AMBIENT ORBS ── */
-    .amb {
-      position: fixed; border-radius: 50%; filter: blur(100px);
-      pointer-events: none; z-index: 0;
-    }
-    .amb-1 { width:560px;height:560px; background:rgba(201,168,76,.05); top:-140px; right:-160px;
-              animation: orb-drift 22s ease-in-out infinite alternate; }
-    .amb-2 { width:440px;height:440px; background:rgba(217,79,61,.04); bottom:0; left:-100px;
-              animation: orb-drift 18s ease-in-out infinite alternate-reverse; }
-    .amb-3 { width:300px;height:300px; background:rgba(99,102,241,.04); top:50%; left:50%;
-              transform:translate(-50%,-50%);
-              animation: orb-drift 25s ease-in-out infinite alternate; }
-    @keyframes orb-drift {
-      0%  { transform: translate(0,0) scale(1); }
-      100%{ transform: translate(24px,18px) scale(1.08); }
-    }
+/* grid */
+.sec{margin-bottom:42px}
+.sec h2{font-size:20px;font-weight:700;margin-bottom:16px;display:flex;align-items:baseline;gap:10px}
+.sec h2 small{font-size:13px;font-weight:400;color:var(--mute)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:26px 18px}
+.card{display:flex;flex-direction:column;min-width:0}
+.poster{position:relative;aspect-ratio:2/3;border-radius:10px;overflow:hidden;background:var(--panel);box-shadow:0 10px 24px rgba(0,0,0,.55);transition:transform .2s}
+.card:hover .poster{transform:translateY(-4px)}
+.poster img{width:100%;height:100%;object-fit:cover;display:block}
+.noimg{height:100%;display:grid;place-items:center;padding:12px;text-align:center;color:var(--mute);font-size:13px}
+.tag{position:absolute;top:8px;left:8px;font-size:10px;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:5px;background:rgba(0,0,0,.72);backdrop-filter:blur(4px)}
+.seen{position:absolute;inset:auto 0 0 0;padding:6px;text-align:center;font-size:11px;font-weight:600;background:rgba(45,212,160,.92);color:#04271c}
+.card.done .poster img{filter:grayscale(.7) brightness(.6)}
+.name{margin-top:10px;font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub{font-size:12px;color:var(--mute);margin-top:3px}
+.acts{display:flex;gap:6px;margin-top:10px}
+.dl{flex:1;padding:8px 6px;border-radius:7px;background:var(--red);color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px}
+.dl:hover{background:var(--red-hi)}
+.ib{width:36px;border-radius:7px;background:var(--raised);color:var(--dim);display:grid;place-items:center}
+.ib:hover{color:#fff;background:#2b2b33}
+.ib.on{background:var(--ok);color:#04271c}
+.ib.del:hover{background:rgba(255,70,70,.18);color:#ff6b6b}
 
-    /* ── FLOATING WATERMARKS ── */
-    .wm {
-      position: fixed; z-index: 0; pointer-events: none;
-      font-family: var(--font-display); font-weight: 900;
-      color: rgba(255,255,255,.02); letter-spacing: .12em;
-      animation: wm-drift 32s linear infinite;
-    }
-    @keyframes wm-drift {
-      0%   { transform: translateY(-110vh) rotate(-6deg); }
-      100% { transform: translateY(110vh)  rotate(6deg); }
-    }
+.empty{text-align:center;padding:70px 20px;color:var(--dim)}
+.empty h3{color:var(--text);font-size:18px;margin-bottom:8px}
 
-    /* ── WRAPPER ── */
-    .wrapper {
-      position: relative; z-index: 1;
-      max-width: 700px; margin: 0 auto;
-      padding: 0 22px 140px;
-    }
+#toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:99;
+  display:flex;align-items:center;gap:14px;padding:12px 20px;border-radius:10px;background:#26262d;border:1px solid var(--line);font-size:14px;box-shadow:0 12px 40px rgba(0,0,0,.6);transition:.25s;max-width:92vw}
+#toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#toast button{color:var(--red-hi);font-weight:600}
 
-    /* ════════════════════
-       HEADER
-    ════════════════════ */
-    .header {
-      text-align: center;
-      padding: 60px 0 44px;
-    }
-    .header-eyebrow {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 10.5px; font-weight: 700; letter-spacing: .22em;
-      text-transform: uppercase; color: var(--gold);
-      border: 1px solid var(--border-gold);
-      padding: 5px 16px; border-radius: 999px;
-      margin-bottom: 22px;
-      background: var(--gold-dim);
-    }
-    .header-eyebrow::before {
-      content: '';
-      display: inline-block; width: 6px; height: 6px;
-      border-radius: 50%; background: var(--gold-bright);
-      box-shadow: 0 0 8px var(--gold);
-      animation: pulse-dot 2s ease-in-out infinite;
-    }
-    .header h1 {
-      font-family: var(--font-display);
-      font-size: clamp(2.2rem, 7vw, 3.8rem);
-      font-weight: 900; line-height: 1.08;
-      letter-spacing: -.025em;
-    }
-    .header h1 em {
-      font-style: italic;
-      background: linear-gradient(125deg, var(--gold-bright) 30%, var(--gold) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .header-sub {
-      margin-top: 14px; font-size: 14.5px;
-      color: var(--text-secondary); font-weight: 300;
-      letter-spacing: .025em;
-    }
-
-    /* ════════════════════
-       DIVIDER
-    ════════════════════ */
-    .divider {
-      height: 1px; width: 100%;
-      background: linear-gradient(90deg, transparent, var(--border-gold), transparent);
-      margin: 30px 0;
-    }
-
-    /* ════════════════════
-       CARDS / SECTIONS
-    ════════════════════ */
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      padding: 28px 30px;
-      box-shadow: var(--shadow-card);
-      transition: var(--t);
-    }
-    .card:hover { box-shadow: var(--shadow-card), var(--shadow-gold); }
-
-    .section-label {
-      font-size: 10px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .2em;
-      color: var(--text-muted); margin-bottom: 16px;
-    }
-
-    /* ════════════════════
-       INPUT + BUTTONS
-    ════════════════════ */
-    .input-row { display: flex; gap: 10px; align-items: stretch; }
-    .input-wrap { flex: 1; position: relative; }
-    .input-wrap .i-icon {
-      position: absolute; left: 14px; top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-muted); pointer-events: none;
-      transition: color .2s;
-    }
-    .input-wrap:focus-within .i-icon { color: var(--gold); }
-
-    input[type="text"] {
-      width: 100%; padding: 13px 14px 13px 42px;
-      font-family: var(--font-body); font-size: 14px; font-weight: 400;
-      background: var(--bg-raised); color: var(--text-primary);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      outline: none; transition: var(--t);
-    }
-    input[type="text"]::placeholder { color: var(--text-muted); }
-    input[type="text"]:focus {
-      border-color: var(--border-gold);
-      background: var(--bg-hover);
-      box-shadow: 0 0 0 3px rgba(201,168,76,.1);
-    }
-
-    button {
-      font-family: var(--font-body); font-size: 13px; font-weight: 600;
-      letter-spacing: .04em; cursor: pointer;
-      border: none; border-radius: var(--radius-md);
-      padding: 13px 22px; transition: var(--t);
-      white-space: nowrap;
-    }
-    .btn-gold {
-      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
-      color: #0c0c0c;
-    }
-    .btn-gold:hover { filter: brightness(1.14); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(201,168,76,.38); }
-    .btn-gold:active { transform: translateY(0); filter: brightness(1); }
-
-    .btn-ghost {
-      background: transparent; color: var(--text-muted);
-      border: 1px solid transparent;
-      padding: 8px 14px; font-size: 12px;
-    }
-    .btn-ghost:hover { background: var(--red-dim); color: var(--red); border-color: rgba(217,79,61,.25); }
-
-    .btn-tg {
-      width: 100%; margin-top: 18px;
-      background: linear-gradient(135deg, #229ED9, #1880c0);
-      color: #fff; padding: 15px;
-      font-size: 14px; letter-spacing: .05em;
-      border-radius: var(--radius-md);
-    }
-    .btn-tg:hover { filter: brightness(1.12); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(34,158,217,.32); }
-
-    /* ════════════════════
-       WELCOME PILL
-    ════════════════════ */
-    #welcomeText {
-      font-size: 13px; color: var(--text-secondary);
-      margin-top: 14px; display: none; align-items: center; gap: 10px;
-    }
-    #welcomeText.visible { display: flex; }
-    .welcome-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--teal); flex-shrink: 0;
-      box-shadow: 0 0 10px var(--teal);
-      animation: pulse-dot 2s ease-in-out infinite;
-    }
-    @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.85)} }
-
-    /* ════════════════════
-       AUTOCOMPLETE
-    ════════════════════ */
-    #autocomplete {
-      position: absolute; top: calc(100% + 8px); left: 0;
-      width: 100%; max-height: 280px; overflow-y: auto;
-      background: var(--bg-raised);
-      border: 1px solid var(--border-gold);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-deep);
-      z-index: 10000; display: none;
-      animation: drop-in .18s cubic-bezier(.4,0,.2,1) both;
-    }
-    @keyframes drop-in { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:none} }
-    #autocomplete::-webkit-scrollbar { width: 4px; }
-    #autocomplete::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
-
-    .ac-item {
-      display: flex; align-items: center;
-      padding: 10px 14px; cursor: pointer; gap: 14px;
-      transition: background .15s;
-      border-bottom: 1px solid var(--border);
-    }
-    .ac-item:last-child { border-bottom: none; }
-    .ac-item:hover { background: var(--bg-hover); }
-    .ac-img {
-      width: 42px; height: 62px; object-fit: cover;
-      border-radius: 6px; flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(0,0,0,.45);
-    }
-    .ac-info { flex: 1; }
-    .ac-title { font-size: 14px; font-weight: 500; color: var(--text-primary); }
-    .ac-year  { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-    .ac-type  {
-      display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .1em;
-      text-transform: uppercase; color: var(--gold); margin-top: 4px;
-      background: var(--gold-dim); padding: 2px 7px; border-radius: 4px;
-    }
-
-    /* ════════════════════
-       SEARCH FILTER BAR
-    ════════════════════ */
-    .search-filter-wrap {
-      position: relative; margin-bottom: 16px;
-    }
-    #filterInput {
-      padding-right: 44px;
-    }
-    #filterInput:not(:placeholder-shown) + .filter-clear { display: flex; }
-    .filter-clear {
-      display: none; align-items: center; justify-content: center;
-      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-      width: 24px; height: 24px; cursor: pointer;
-      color: var(--text-muted); transition: color .2s;
-      background: var(--bg-raised); border-radius: 50%;
-    }
-    .filter-clear:hover { color: var(--text-primary); }
-
-    .filter-chips {
-      display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap;
-    }
-    .chip {
-      padding: 5px 14px; border-radius: 999px; font-size: 12px; font-weight: 600;
-      letter-spacing: .04em; cursor: pointer; transition: var(--t);
-      border: 1px solid var(--border);
-      background: transparent; color: var(--text-muted);
-    }
-    .chip:hover { border-color: var(--border-gold); color: var(--gold); }
-    .chip.active {
-      background: var(--gold-dim); border-color: var(--border-gold); color: var(--gold-bright);
-    }
-
-    /* ════════════════════
-       STATS BAR
-    ════════════════════ */
-    .stats-bar {
-      display: flex; align-items: center; gap: 16px;
-      margin-bottom: 20px;
-    }
-    .stat-pill {
-      font-size: 12px; font-weight: 500;
-      color: var(--text-secondary); white-space: nowrap;
-    }
-    .stat-pill strong { color: var(--gold-bright); font-weight: 700; }
-    .progress-track {
-      flex: 1; height: 3px;
-      background: var(--bg-raised); border-radius: 99px; overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-bright));
-      border-radius: 99px; transition: width .6s cubic-bezier(.4,0,.2,1);
-    }
-
-    /* ════════════════════
-       NO-RESULTS STATE
-    ════════════════════ */
-    #noResults {
-      display: none; text-align: center;
-      padding: 40px 20px; color: var(--text-muted);
-    }
-    #noResults.visible { display: block; }
-    #noResults p { font-size: 15px; }
-    #noResults span { font-size: 13px; opacity: .65; display: block; margin-top: 6px; }
-
-    /* ════════════════════
-       LIST HEADER
-    ════════════════════ */
-    .list-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 20px;
-    }
-    .list-title {
-      font-family: var(--font-display);
-      font-size: 22px; font-weight: 700;
-    }
-    .sort-btn {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 12px; font-weight: 600; color: var(--text-muted);
-      cursor: pointer; transition: color .2s; user-select: none;
-      padding: 6px 12px; border-radius: 8px;
-      border: 1px solid transparent; background: none;
-    }
-    .sort-btn:hover { color: var(--gold); border-color: var(--border-gold); background: var(--gold-dim); }
-
-    /* ════════════════════
-       LIST ITEMS
-    ════════════════════ */
-    #seriesList { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-
-    li {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 14px 16px;
-      display: flex; align-items: center; gap: 14px;
-      box-shadow: var(--shadow-card);
-      transition: var(--t);
-      animation: slide-in .28s cubic-bezier(.4,0,.2,1) both;
-      position: relative; overflow: hidden;
-    }
-    /* shimmer line on hover */
-    li::after {
-      content: '';
-      position: absolute; left: 0; top: 0; bottom: 0;
-      width: 3px; background: linear-gradient(180deg, var(--gold-bright), var(--gold));
-      border-radius: 2px 0 0 2px;
-      opacity: 0; transform: scaleY(.4);
-      transition: opacity .2s, transform .25s cubic-bezier(.4,0,.2,1);
-    }
-    li:hover::after { opacity: 1; transform: scaleY(1); }
-
-    li:hover {
-      border-color: rgba(201,168,76,.18);
-      transform: translateY(-2px) translateX(2px);
-      box-shadow: var(--shadow-card), 0 8px 28px rgba(0,0,0,.35);
-    }
-    @keyframes slide-in { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
-
-    li .poster-thumb {
-      width: 52px; height: 78px; object-fit: cover;
-      border-radius: 8px; flex-shrink: 0;
-      box-shadow: 0 4px 14px rgba(0,0,0,.55);
-      transition: var(--t);
-    }
-    li:hover .poster-thumb { transform: scale(1.04); }
-
-    .item-body { flex: 1; min-width: 0; }
-    .item-title {
-      font-size: 15px; font-weight: 500;
-      color: var(--text-primary);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      transition: var(--t);
-    }
-    .item-meta {
-      display: flex; align-items: center; gap: 8px; margin-top: 5px;
-      flex-wrap: wrap;
-    }
-    .item-badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 11px; font-weight: 600; letter-spacing: .07em;
-      text-transform: uppercase; color: var(--text-muted);
-    }
-    .badge-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--text-muted); transition: var(--t);
-    }
-    .item-date {
-      font-size: 11px; color: var(--text-muted);
-      display: flex; align-items: center; gap: 4px;
-    }
-
-    /* ── CUSTOM CHECKBOX ── */
-    .check-wrap {
-      position: relative; width: 22px; height: 22px; flex-shrink: 0;
-    }
-    .check-wrap input[type="checkbox"] {
-      position: absolute; opacity: 0; inset: 0;
-      cursor: pointer; z-index: 2; margin: 0; padding: 0;
-    }
-    .check-box {
-      width: 22px; height: 22px; border-radius: 6px;
-      border: 2px solid var(--text-muted);
-      background: transparent; transition: var(--t);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .check-box svg { opacity: 0; transition: opacity .15s; }
-    .check-wrap input:checked ~ .check-box {
-      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
-      border-color: transparent;
-      box-shadow: 0 0 12px rgba(201,168,76,.4);
-    }
-    .check-wrap input:checked ~ .check-box svg { opacity: 1; }
-
-    /* watched state */
-    li.watched .item-title { text-decoration: line-through; color: var(--text-muted); }
-    li.watched .badge-dot  { background: var(--teal); }
-    li.watched .item-badge { color: var(--teal); }
-    li.watched .item-badge::after { content: 'Watched'; }
-    li:not(.watched) .item-badge::after { content: 'Unwatched'; }
-
-    /* filtered-hidden / filtered-visible */
-    li.filter-hidden {
-      display: none;
-    }
-    li.filter-match .item-title em {
-      color: var(--gold-bright);
-      font-style: normal;
-      text-decoration: none;
-    }
-
-    /* ════════════════════
-       EMPTY STATE
-    ════════════════════ */
-    .empty-state {
-      text-align: center; padding: 56px 20px;
-      color: var(--text-muted); display: none;
-    }
-    .empty-state.visible { display: block; }
-    .empty-icon {
-      width: 64px; height: 64px; margin: 0 auto 20px;
-      border: 2px dashed rgba(255,255,255,.1);
-      border-radius: 18px; display: flex; align-items: center; justify-content: center;
-      opacity: .5;
-    }
-    .empty-state p  { font-size: 15px; color: var(--text-secondary); }
-    .empty-state span { font-size: 13px; opacity: .6; display: block; margin-top: 6px; }
-
-    /* ════════════════════
-       TOAST
-    ════════════════════ */
-    #toast {
-      position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
-      padding: 12px 22px;
-      background: rgba(10,10,18,.94); backdrop-filter: blur(14px);
-      border: 1px solid var(--border-gold);
-      border-radius: 999px;
-      color: var(--text-primary); font-size: 13px; font-weight: 500;
-      box-shadow: 0 8px 32px rgba(0,0,0,.5);
-      z-index: 9999; pointer-events: none;
-      opacity: 0; transition: opacity .3s, transform .3s;
-    }
-    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    /* ════════════════════
-       RT BANNER
-    ════════════════════ */
-    .rt-banner {
-      position: fixed; bottom: 24px; left: 50%;
-      transform: translateX(-50%);
-      padding: 13px 28px;
-      background: rgba(8,8,14,.92); backdrop-filter: blur(14px);
-      border-radius: 999px;
-      border: 1px solid var(--border-gold);
-      box-shadow: 0 8px 32px rgba(0,0,0,.5), var(--shadow-gold);
-      color: #fff; font-family: var(--font-body);
-      text-align: center; z-index: 9999;
-      pointer-events: none;
-      animation: banner-in 4s ease-out, banner-fade 10s ease forwards;
-    }
-    .rt-inner {
-      font-size: 13px; color: var(--text-secondary);
-      display: flex; align-items: center; gap: 10px;
-    }
-    .rt-inner strong {
-      font-family: var(--font-display);
-      font-size: 16px; font-weight: 700;
-      color: var(--gold-bright);
-      text-shadow: 0 0 14px rgba(232,201,106,.5);
-    }
-    @keyframes banner-in {
-      0%  { opacity:0; transform:translateX(-50%) scale(.88); }
-      22% { opacity:1; transform:translateX(-50%) scale(1); filter:brightness(1.5); }
-      100%{ filter:brightness(1); }
-    }
-    @keyframes banner-fade { 0%,78%{opacity:1} 100%{opacity:0;visibility:hidden} }
-
-    /* ── LOCKED ── */
-    #addSection.locked { opacity: .48; pointer-events: none; }
-
-    /* ════════════════════
-       SCROLLBAR
-    ════════════════════ */
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--bg-raised); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-
-    /* ════════════════════
-       RESPONSIVE
-    ════════════════════ */
-    @media(max-width:520px){
-      .wrapper { padding: 0 14px 140px; }
-      .card { padding: 22px 18px; }
-      .header { padding: 40px 0 30px; }
-      .filter-chips { gap: 6px; }
-    }
-  </style>
+@media(max-width:620px){
+  .top{gap:10px;padding:12px 4vw;flex-wrap:wrap}
+  .tabs{order:3;flex-basis:100%}
+  .user .uname{display:none}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:22px 12px}
+  .sortbox{margin-left:0}
+  .findbox{max-width:none}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
 </head>
 <body>
 
-  <!-- Ambient orbs -->
-  <div class="amb amb-1"></div>
-  <div class="amb amb-2"></div>
-  <div class="amb amb-3"></div>
-
-  <!-- Watermarks -->
-  <div class="wm" style="font-size:26px;top:8%;left:8%">ROTWAVE</div>
-  <div class="wm" style="font-size:20px;top:25%;left:72%;animation-delay:-8s">ROTWAVE</div>
-  <div class="wm" style="font-size:32px;top:55%;left:38%;animation-delay:-15s">ROTWAVE</div>
-  <div class="wm" style="font-size:18px;top:78%;left:18%;animation-delay:-4s">ROTWAVE</div>
-
-  <div class="wrapper">
-
-    <!-- ── HEADER ── -->
-    <div class="header">
-      <div class="header-eyebrow">RTSTUDIOS</div>
-      <h1>Your <em>Watchlist</em></h1>
-      <p class="header-sub">Track every series. Never lose your place.</p>
-    </div>
-
-    <!-- ── LOGIN CARD ── -->
-    <div id="loginSection" class="card">
-      <div class="section-label">Sign In or Register</div>
-      <div class="input-row">
-        <div class="input-wrap">
-          <input type="text" id="usernameInput" placeholder="Your username..." autocomplete="off">
-          <svg class="i-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </div>
-        <button class="btn-gold" onclick="loginUser()">Enter</button>
-      </div>
-      <div id="welcomeText">
-        <span class="welcome-dot"></span>
-        <span id="welcomeInner"></span>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- ── ADD SECTION ── -->
-    <div id="addSection" class="card locked" style="margin-bottom:26px">
-      <div class="section-label">Add to Watchlist</div>
-      <div style="position:relative">
-        <div class="input-row">
-          <div class="input-wrap" style="flex:1">
-            <input type="text" id="seriesInput" placeholder="Search for a series or movie..." disabled autocomplete="off">
-            <svg class="i-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          </div>
-          <button class="btn-gold" onclick="addSeries()">Add</button>
-        </div>
-        <div id="autocomplete"></div>
-      </div>
-    </div>
-
-    <!-- ── LIST SECTION ── -->
-    <div id="listSection" style="display:none">
-
-      <div class="list-header">
-        <span class="list-title">My Watchlist</span>
-        <button class="sort-btn" id="sortBtn" onclick="toggleSort()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5h10M11 9h7M11 13h4M3 17l3 3 3-3M6 20V4"/></svg>
-          <span id="sortLabel">A → Z</span>
-        </button>
-      </div>
-
-      <!-- Search filter -->
-      <div class="search-filter-wrap">
-        <div class="input-wrap">
-          <input type="text" id="filterInput" placeholder="Search your watchlist..." autocomplete="off">
-          <svg class="i-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <span class="filter-clear" id="filterClear" onclick="clearFilter()" title="Clear">
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </span>
-        </div>
-      </div>
-
-      <!-- Filter chips -->
-      <div class="filter-chips">
-        <button class="chip active" data-filter="all"    onclick="setChip(this,'all')">All</button>
-        <button class="chip"        data-filter="unwatched" onclick="setChip(this,'unwatched')">Unwatched</button>
-        <button class="chip"        data-filter="watched"   onclick="setChip(this,'watched')">Watched</button>
-      </div>
-
-      <!-- Stats -->
-      <div class="stats-bar">
-        <div class="stat-pill"><strong id="statWatched">0</strong> watched</div>
-        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-        <div class="stat-pill"><strong id="statTotal">0</strong> total</div>
-      </div>
-
-      <!-- Empty state -->
-      <div class="empty-state" id="emptyState">
-        <div class="empty-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><path d="M7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 17h5M17 7h5"/></svg>
-        </div>
-        <p>Nothing added yet</p>
-        <span>Search for a title above to get started</span>
-      </div>
-
-      <!-- No-results (search) -->
-      <div id="noResults">
-        <p>No matches found</p>
-        <span id="noResultsHint"></span>
-      </div>
-
-      <ul id="seriesList"></ul>
-
-      <!-- Telegram CTA -->
-      <a href="https://t.me/rtmoviesera" target="_blank" style="text-decoration:none">
-        <button class="btn-tg">
-          <svg style="display:inline;vertical-align:middle;margin-right:8px" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 1 0 24 12 12 12 0 0 0 11.944 0zm5.5 8.5-1.97 9.3c-.15.7-.54.87-1.1.54l-3-2.21-1.45 1.4c-.16.16-.3.3-.6.3l.21-3.1 5.56-5.02c.24-.21-.05-.33-.37-.12L8.09 14.1l-2.96-.93c-.64-.2-.65-.64.13-.95l11.57-4.47c.53-.2 1 .13.81.95z"/></svg>
-          Join the ROTWAVE Telegram Channel
-        </button>
-      </a>
-    </div>
+<header class="top">
+  <div class="brand">RTSTUDIOS</div>
+  <nav class="tabs" id="tabs" hidden>
+    <button class="tab on" data-type="all">All</button>
+    <button class="tab" data-type="movie">Movies</button>
+    <button class="tab" data-type="tv">Series</button>
+  </nav>
+  <div class="user" id="user" hidden>
+    <span class="uname" id="uname"></span><div class="avatar" id="avatar"></div>
+    <button class="link" id="logout">Sign out</button>
   </div>
+</header>
 
-  <!-- Toast -->
-  <div id="toast"></div>
+<main>
+  <!-- SIGN IN -->
+  <section class="gate" id="gate">
+    <h1>Your watchlist</h1>
+    <p>Sign in to keep track of movies and series. New username? We create the account for you.</p>
+    <form id="loginForm">
+      <label class="field"><span>Username</span><input type="text" id="u" autocomplete="username" required></label>
+      <label class="field"><span>Password</span><input type="password" id="p" autocomplete="current-password" required></label>
+      <button class="btn wide" id="loginBtn" type="submit">Continue</button>
+      <div class="err" id="loginErr" role="alert"></div>
+    </form>
+  </section>
 
-  <!-- Banner -->
-  <div class="rt-banner">
-    <div class="rt-inner">
-      <span>From</span>
-      <strong>BLUEWAVE</strong>
+  <!-- APP -->
+  <div id="app" hidden>
+    <div class="addbar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="addInput" placeholder="Search a movie or series to add" autocomplete="off">
+      <div id="ac" hidden></div>
     </div>
+
+    <div class="toolbar">
+      <div class="group" id="statusChips">
+        <button class="chip on" data-status="all">All</button>
+        <button class="chip" data-status="unwatched">Unwatched</button>
+        <button class="chip" data-status="watched">Watched</button>
+      </div>
+      <div class="findbox"><input type="text" id="findInput" placeholder="Filter your list"></div>
+      <label class="sortbox">Sort by
+        <select id="sortSel">
+          <option value="latest">Latest added</option>
+          <option value="oldest">Oldest added</option>
+          <option value="az">A to Z</option>
+          <option value="za">Z to A</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="stats"><span><b id="sW">0</b> watched</span><div class="bar"><i id="sBar" style="width:0"></i></div><span><b id="sT">0</b> total</span></div>
+
+    <div id="rows"></div>
   </div>
+</main>
 
-  <script>
-    /* ═══════════════════════════
-       CONSTANTS
-    ═══════════════════════════ */
-    const TMDB_KEY  = "276ce1441c92d4989b5a0080e47e0633";
-    const IMG_BASE  = "https://image.tmdb.org/t/p/w92";
-    const API_BASE  = "https://rtwatch-backend.onrender.com";
+<div id="toast"><span id="toastMsg"></span><button id="toastAct" hidden></button></div>
 
-    let currentUser = null;
-    let authToken   = null;
-    let sortAsc     = true;
-    let activeChip  = 'all';
+<script>
+const TMDB_KEY = "276ce1441c92d4989b5a0080e47e0633";
+const IMG  = "https://image.tmdb.org/t/p/w342";
+const API  = "https://rtwatch-backend.onrender.com";
+const TG   = "https://t.me/rtmoviestalk";
 
-    const seriesList = document.getElementById("seriesList");
-    const inputBox   = document.getElementById("seriesInput");
-    const acBox      = document.getElementById("autocomplete");
-    const filterInput= document.getElementById("filterInput");
+const S = { token:null, user:null, items:[], type:"all", status:"all", sort:"latest", q:"" };
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const isTv = it => it.mediaType === "tv";
+const keyOf = it => it.tmdbId ? `${it.mediaType}:${it.tmdbId}` : `n:${it.name.trim().toLowerCase()}`;
+const posterUrl = p => p ? p.replace("/w92/", "/w342/") : "";
+const ts = it => it.addedAt ? Date.parse(it.addedAt) || 0 : 0;
 
-    /* ═══════════════════════════
-       TOAST
-    ═══════════════════════════ */
-    function showToast(msg, dur = 2600) {
-      const t = document.getElementById("toast");
-      t.textContent = msg;
-      t.classList.add("show");
-      clearTimeout(t._tid);
-      t._tid = setTimeout(() => t.classList.remove("show"), dur);
-    }
+/* ---------- toast ---------- */
+let toastTimer;
+function toast(msg, actLabel, actFn) {
+  $("toastMsg").textContent = msg;
+  const b = $("toastAct");
+  b.hidden = !actLabel;
+  if (actLabel) { b.textContent = actLabel; b.onclick = () => { actFn(); $("toast").classList.remove("show"); }; }
+  $("toast").classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => $("toast").classList.remove("show"), actLabel ? 5000 : 2600);
+}
 
-    /* ═══════════════════════════
-       STATS
-    ═══════════════════════════ */
-    function updateStats() {
-      const all     = [...seriesList.querySelectorAll("li")];
-      const total   = all.length;
-      const watched = all.filter(l => l.classList.contains("watched")).length;
-      document.getElementById("statWatched").textContent = watched;
-      document.getElementById("statTotal").textContent   = total;
-      const pct = total ? Math.round(watched / total * 100) : 0;
-      document.getElementById("progressFill").style.width = pct + "%";
-      document.getElementById("emptyState").classList.toggle("visible", total === 0);
-      applyFilter();
-    }
+/* ---------- data: one source of truth (S.items), the DOM is only a view ---------- */
+function dedupe(list) {
+  const map = new Map();
+  list.forEach(it => {
+    const k = keyOf(it), prev = map.get(k);
+    if (prev) { prev.watched = prev.watched || it.watched; if (!prev.addedAt && it.addedAt) prev.addedAt = it.addedAt; }
+    else map.set(k, { ...it, _i: map.size });
+  });
+  return [...map.values()];
+}
 
-    /* ═══════════════════════════
-       FILTER / SEARCH
-    ═══════════════════════════ */
-    filterInput.addEventListener("input", applyFilter);
+/* saves are serialised so two requests can never overwrite each other out of order */
+let saving = false, dirty = false;
+function save() { dirty = true; if (!saving) flush(); }
+async function flush() {
+  saving = true;
+  while (dirty) {
+    dirty = false;
+    if (!S.token) break;
+    const watchlist = S.items.map(({ name, watched, poster, tmdbId, mediaType, year, addedAt }) =>
+      ({ name, watched, poster, tmdbId: tmdbId || 0, mediaType: mediaType || "", year: year || "", addedAt: addedAt || null }));
+    try {
+      const r = await fetch(`${API}/api/watchlist`, { method:"POST",
+        headers:{ "Content-Type":"application/json", Authorization:`Bearer ${S.token}` }, body: JSON.stringify({ watchlist }) });
+      if (!r.ok) toast("Couldn't sync your list. Check your connection.");
+    } catch (e) { console.error(e); toast("Couldn't sync your list. Check your connection."); }
+  }
+  saving = false;
+}
 
-    function setChip(el, val) {
-      document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
-      el.classList.add("active");
-      activeChip = val;
-      applyFilter();
-    }
+let loadSeq = 0;
+async function loadList() {
+  const seq = ++loadSeq;
+  const r = await fetch(`${API}/api/watchlist`, { headers:{ Authorization:`Bearer ${S.token}` } });
+  if (r.status === 401) return signOut(true);
+  const d = await r.json();
+  if (seq !== loadSeq) return;
+  S.items = dedupe(d.watchlist || []);
+  render();
+  migrateOld();
+}
 
-    function clearFilter() {
-      filterInput.value = "";
-      applyFilter();
-    }
-
-    function applyFilter() {
-      const query = filterInput.value.trim().toLowerCase();
-      const items = [...seriesList.querySelectorAll("li")];
-      let visible = 0;
-
-      items.forEach(li => {
-        const rawTitle = li.dataset.rawTitle || li.querySelector(".item-title").dataset.raw || "";
-        const titleEl  = li.querySelector(".item-title");
-
-        /* chip filter */
-        const isWatched = li.classList.contains("watched");
-        let chipPass = true;
-        if (activeChip === "watched")   chipPass = isWatched;
-        if (activeChip === "unwatched") chipPass = !isWatched;
-
-        /* text filter */
-        const textPass = !query || rawTitle.toLowerCase().includes(query);
-
-        if (chipPass && textPass) {
-          li.classList.remove("filter-hidden");
-          visible++;
-
-          /* highlight matched text */
-          if (query) {
-            const idx = rawTitle.toLowerCase().indexOf(query);
-            const before  = rawTitle.slice(0, idx);
-            const matched = rawTitle.slice(idx, idx + query.length);
-            const after   = rawTitle.slice(idx + query.length);
-            titleEl.innerHTML = `${esc(before)}<em style="color:var(--gold-bright);font-style:normal">${esc(matched)}</em>${esc(after)}`;
-          } else {
-            titleEl.textContent = rawTitle;
-          }
-        } else {
-          li.classList.add("filter-hidden");
-        }
-      });
-
-      const nr = document.getElementById("noResults");
-      const hasItems = seriesList.querySelectorAll("li").length > 0;
-      if (hasItems && visible === 0) {
-        nr.classList.add("visible");
-        document.getElementById("noResultsHint").textContent =
-          query ? `No results for "${filterInput.value}"` : `Nothing in this category yet.`;
-      } else {
-        nr.classList.remove("visible");
-      }
-    }
-
-    function esc(str) {
-      return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-    }
-
-    /* ═══════════════════════════
-       SORT
-    ═══════════════════════════ */
-    function toggleSort() {
-      sortAsc = !sortAsc;
-      document.getElementById("sortLabel").textContent = sortAsc ? "A → Z" : "Z → A";
-      const items = [...seriesList.querySelectorAll("li")];
-      items.sort((a, b) => {
-        const ta = (a.dataset.rawTitle || "").toLowerCase();
-        const tb = (b.dataset.rawTitle || "").toLowerCase();
-        return sortAsc ? ta.localeCompare(tb) : tb.localeCompare(ta);
-      });
-      items.forEach(li => seriesList.appendChild(li));
-    }
-
-    /* ═══════════════════════════
-       LOGIN
-    ═══════════════════════════ */
-    async function loginUser() {
-      const username = document.getElementById("usernameInput").value.trim();
-      if (!username) return;
-      const password = prompt(`Welcome, ${username}!\n\nEnter your password (a new account is created automatically if needed):`);
-      if (!password) return;
-
+/* older entries only stored a name + poster: look them up once so they get a type, year and HD poster */
+async function migrateOld() {
+  const tok = S.token, queue = S.items.filter(i => !i.tmdbId);
+  if (!queue.length) return;
+  let changed = false;
+  await Promise.all([0,1,2,3].map(async () => {
+    while (queue.length) {
+      const it = queue.shift();
       try {
-        const res  = await fetch(`${API_BASE}/api/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
-        if (!res.ok) return alert(data.error || "Login failed");
-
-        authToken   = data.token;
-        currentUser = data.username;
-
-        const wt = document.getElementById("welcomeText");
-        document.getElementById("welcomeInner").textContent =
-          `Signed in as ${username} — your list syncs automatically.`;
-        wt.classList.add("visible");
-
-        document.getElementById("addSection").classList.remove("locked");
-        inputBox.disabled = false;
-        document.getElementById("listSection").style.display = "block";
-
-        showToast(`👋 Welcome back, ${username}!`);
-        await loadList();
-      } catch(e) { console.error(e); alert("Server error — please try again."); }
+        const r = await (await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_KEY}&include_adult=false&query=${encodeURIComponent(it.name)}`)).json();
+        const h = (r.results || []).find(x => (x.media_type === "movie" || x.media_type === "tv") && x.poster_path);
+        if (h) { Object.assign(it, { tmdbId:h.id, mediaType:h.media_type, year:(h.release_date||h.first_air_date||"").slice(0,4), poster:IMG+h.poster_path }); changed = true; }
+      } catch (e) {}
     }
+  }));
+  if (changed && S.token === tok) { S.items = dedupe(S.items); render(); save(); }
+}
 
-    /* ═══════════════════════════
-       AUTOCOMPLETE
-    ═══════════════════════════ */
-    let debTimer;
-    inputBox.addEventListener("input", () => {
-      const q = inputBox.value.trim();
-      clearTimeout(debTimer);
-      if (!q) { acBox.style.display = "none"; return; }
-      debTimer = setTimeout(() => fetchSuggestions(q), 340);
-    });
+/* ---------- Telegram download request ---------- */
+async function requestDownload(it) {
+  const msg = `Hi RT Movies Talk 👋\nPlease upload: ${it.name}${it.year ? ` (${it.year})` : ""} – ${isTv(it) ? "Series" : "Movie"}\n(from my RTSTUDIOS watchlist)`;
+  try { await navigator.clipboard.writeText(msg); toast("Request copied. Paste it in the group chat."); }
+  catch (e) { toast("Opening Telegram. Type the title in the group."); }
+  window.open(TG, "_blank", "noopener");
+}
 
-    async function fetchSuggestions(query) {
-      const url = `https://api.themoviedb.org/3/search/multi?api_key=${TMDB_KEY}&language=en-US&page=1&include_adult=false&query=${encodeURIComponent(query)}`;
-      try {
-        const res  = await fetch(url);
-        const data = await res.json();
-        acBox.innerHTML = "";
-        const filtered = data.results.filter(i => i.poster_path).slice(0, 7);
-        filtered.forEach(item => {
-          const year  = (item.release_date || item.first_air_date || "").slice(0, 4);
-          const type  = item.media_type === "movie" ? "Movie" : "Series";
-          const div   = document.createElement("div");
-          div.className = "ac-item";
-          div.innerHTML = `
-            <img class="ac-img" src="${IMG_BASE}${item.poster_path}" alt="" loading="lazy">
-            <div class="ac-info">
-              <div class="ac-title">${item.title || item.name}</div>
-              ${year ? `<div class="ac-year">${year}</div>` : ""}
-              <span class="ac-type">${type}</span>
-            </div>`;
-          div.addEventListener("click", () => {
-            inputBox.value = item.title || item.name;
-            inputBox.dataset.poster = IMG_BASE + item.poster_path;
-            acBox.style.display = "none";
-          });
-          acBox.appendChild(div);
-        });
-        acBox.style.display = acBox.childElementCount ? "block" : "none";
-      } catch(e) { console.error(e); }
-    }
+/* ---------- render ---------- */
+function view() {
+  const q = S.q.toLowerCase();
+  const list = S.items.filter(it =>
+    (S.type === "all" || (S.type === "tv") === isTv(it)) &&
+    (S.status === "all" || (S.status === "watched") === !!it.watched) &&
+    (!q || it.name.toLowerCase().includes(q)));
+  const by = {
+    latest: (a,b) => ts(b) - ts(a) || b._i - a._i,
+    oldest: (a,b) => ts(a) - ts(b) || a._i - b._i,
+    az: (a,b) => a.name.localeCompare(b.name),
+    za: (a,b) => b.name.localeCompare(a.name)
+  }[S.sort];
+  return list.sort(by);
+}
 
-    document.addEventListener("click", e => {
-      if (!acBox.contains(e.target) && e.target !== inputBox)
-        acBox.style.display = "none";
-    });
+function cardHTML(it) {
+  const k = esc(keyOf(it));
+  const added = it.addedAt ? new Date(it.addedAt).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}) : "";
+  const p = posterUrl(it.poster);
+  return `<article class="card${it.watched ? " done" : ""}" data-k="${k}">
+    <div class="poster">${p ? `<img src="${esc(p)}" alt="" loading="lazy">` : `<div class="noimg">${esc(it.name)}</div>`}
+      <span class="tag">${isTv(it) ? "SERIES" : "MOVIE"}</span>${it.watched ? `<span class="seen">Watched</span>` : ""}</div>
+    <div class="name" title="${esc(it.name)}">${esc(it.name)}</div>
+    <div class="sub">${[it.year, added && "Added " + added].filter(Boolean).join(" · ")}</div>
+    <div class="acts">
+      <button class="dl" data-act="dl" title="Request this on Telegram"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>Download</button>
+      <button class="ib${it.watched ? " on" : ""}" data-act="seen" title="${it.watched ? "Mark as unwatched" : "Mark as watched"}" aria-pressed="${!!it.watched}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+      <button class="ib del" data-act="del" title="Remove"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button>
+    </div></article>`;
+}
 
-    /* ═══════════════════════════
-       BUILD LIST ITEM
-    ═══════════════════════════ */
-    function buildItem(name, watched, poster) {
-      const li = document.createElement("li");
-      li.dataset.rawTitle = name;
+function render() {
+  const n = S.items.length, w = S.items.filter(i => i.watched).length;
+  $("sW").textContent = w; $("sT").textContent = n;
+  $("sBar").style.width = (n ? Math.round(w / n * 100) : 0) + "%";
 
-      /* poster */
-      if (poster) {
-        const img = document.createElement("img");
-        img.src = poster; img.className = "poster-thumb";
-        img.loading = "lazy";
-        li.appendChild(img);
-      }
+  const list = view(), rows = $("rows");
+  if (!list.length) {
+    rows.innerHTML = n
+      ? `<div class="empty"><h3>No matches</h3>Try a different filter or search.</div>`
+      : `<div class="empty"><h3>Your list is empty</h3>Search above and tap a title to add it.</div>`;
+    return;
+  }
+  const sec = (title, arr) => arr.length ? `<section class="sec"><h2>${title}<small>${arr.length}</small></h2><div class="grid">${arr.map(cardHTML).join("")}</div></section>` : "";
+  const movies = list.filter(i => !isTv(i)), series = list.filter(isTv);
+  rows.innerHTML = S.type === "all" ? sec("Movies", movies) + sec("Series", series)
+                 : sec(S.type === "tv" ? "Series" : "Movies", list);
+}
 
-      /* checkbox */
-      const cWrap = document.createElement("div");
-      cWrap.className = "check-wrap";
-      const cb = document.createElement("input");
-      cb.type = "checkbox"; cb.checked = watched;
-      const cBox = document.createElement("div");
-      cBox.className = "check-box";
-      cBox.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
-        fill="none" stroke="#0c0c0c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"/></svg>`;
-      cWrap.appendChild(cb); cWrap.appendChild(cBox);
+/* ---------- card actions (event delegation) ---------- */
+$("rows").addEventListener("click", e => {
+  const btn = e.target.closest("[data-act]"); if (!btn) return;
+  const k = btn.closest(".card").dataset.k;
+  const it = S.items.find(i => keyOf(i) === k); if (!it) return;
+  if (btn.dataset.act === "dl") return requestDownload(it);
+  if (btn.dataset.act === "seen") {
+    it.watched = !it.watched; save(); render();
+    return toast(it.watched ? "Marked as watched" : "Marked as unwatched");
+  }
+  if (btn.dataset.act === "del") {
+    const idx = S.items.indexOf(it);
+    S.items.splice(idx, 1); save(); render();
+    toast(`Removed "${it.name}"`, "Undo", () => { S.items.splice(idx, 0, it); S.items = dedupe(S.items); save(); render(); });
+  }
+});
 
-      /* body */
-      const body    = document.createElement("div");
-      body.className = "item-body";
-      const titleEl  = document.createElement("div");
-      titleEl.className = "item-title";
-      titleEl.dataset.raw = name;
-      titleEl.textContent = name;
+/* ---------- filters ---------- */
+$("tabs").addEventListener("click", e => {
+  const b = e.target.closest(".tab"); if (!b) return;
+  S.type = b.dataset.type;
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("on", t === b));
+  render();
+});
+$("statusChips").addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if (!b) return;
+  S.status = b.dataset.status;
+  document.querySelectorAll("#statusChips .chip").forEach(c => c.classList.toggle("on", c === b));
+  render();
+});
+$("sortSel").addEventListener("change", e => { S.sort = e.target.value; render(); });
+$("findInput").addEventListener("input", e => { S.q = e.target.value.trim(); render(); });
 
-      const meta    = document.createElement("div");
-      meta.className = "item-meta";
-      const badge   = document.createElement("div");
-      badge.className = "item-badge";
-      const dot     = document.createElement("span");
-      dot.className = "badge-dot";
-      badge.appendChild(dot);
+/* ---------- search + add ---------- */
+let acTimer, acSeq = 0, acResults = [];
+const addInput = $("addInput"), ac = $("ac");
+addInput.addEventListener("input", () => {
+  clearTimeout(acTimer);
+  const q = addInput.value.trim();
+  if (!q) { ac.hidden = true; return; }
+  acTimer = setTimeout(() => suggest(q), 300);
+});
+addInput.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !ac.hidden && acResults[0]) { e.preventDefault(); addTitle(acResults[0]); }
+  if (e.key === "Escape") ac.hidden = true;
+});
+document.addEventListener("click", e => { if (!ac.contains(e.target) && e.target !== addInput) ac.hidden = true; });
 
-      const dateEl  = document.createElement("div");
-      dateEl.className = "item-date";
-      const now = new Date();
-      dateEl.textContent = `Added ${now.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}`;
+async function suggest(q) {
+  const seq = ++acSeq;
+  try {
+    const r = await (await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${TMDB_KEY}&language=en-US&page=1&include_adult=false&query=${encodeURIComponent(q)}`)).json();
+    if (seq !== acSeq) return;
+    acResults = (r.results || []).filter(i => (i.media_type === "movie" || i.media_type === "tv") && i.poster_path).slice(0, 7);
+    ac.innerHTML = acResults.map((h, i) => {
+      const year = (h.release_date || h.first_air_date || "").slice(0, 4);
+      const inList = S.items.some(x => keyOf(x) === `${h.media_type}:${h.id}`);
+      return `<button class="ac-row" data-i="${i}"><img src="https://image.tmdb.org/t/p/w92${h.poster_path}" alt="">
+        <div><div class="ac-t">${esc(h.title || h.name)}</div><div class="ac-s">${h.media_type === "tv" ? "Series" : "Movie"}${year ? ", " + year : ""}</div></div>
+        ${inList ? `<span class="ac-in">In your list</span>` : ""}</button>`;
+    }).join("") || `<div class="ac-row" style="color:var(--dim)">No results found</div>`;
+    ac.hidden = false;
+  } catch (e) { console.error(e); }
+}
+ac.addEventListener("click", e => {
+  const b = e.target.closest(".ac-row[data-i]"); if (b) addTitle(acResults[+b.dataset.i]);
+});
 
-      meta.appendChild(badge);
-      meta.appendChild(dateEl);
-      body.appendChild(titleEl);
-      body.appendChild(meta);
+function addTitle(h) {
+  const name = h.title || h.name, key = `${h.media_type}:${h.id}`;
+  ac.hidden = true; addInput.value = "";
+  const exists = S.items.some(x => keyOf(x) === key || (!x.tmdbId && x.name.trim().toLowerCase() === name.trim().toLowerCase()));
+  if (exists) return toast(`"${name}" is already in your list`);
+  S.items.push({ name, watched:false, poster:IMG + h.poster_path, tmdbId:h.id, mediaType:h.media_type,
+    year:(h.release_date || h.first_air_date || "").slice(0, 4), addedAt:new Date().toISOString(), _i:S.items.length });
+  S.status = "all"; S.q = ""; $("findInput").value = "";
+  document.querySelectorAll("#statusChips .chip").forEach(c => c.classList.toggle("on", c.dataset.status === "all"));
+  save(); render();
+  toast(`Added "${name}"`);
+}
 
-      /* delete */
-      const del = document.createElement("button");
-      del.textContent = "Remove";
-      del.className = "btn-ghost";
-      del.addEventListener("click", () => {
-        li.style.opacity = "0";
-        li.style.transform = "translateX(24px)";
-        li.style.transition = "opacity .22s, transform .22s";
-        setTimeout(() => { li.remove(); saveList(); updateStats(); }, 230);
-        showToast(`🗑️ "${name}" removed`);
-      });
+/* ---------- auth ---------- */
+function showApp() {
+  $("gate").hidden = true; $("app").hidden = false; $("tabs").hidden = false; $("user").hidden = false;
+  $("uname").textContent = S.user; $("avatar").textContent = S.user.charAt(0);
+}
+function signOut(expired) {
+  loadSeq++; S.token = S.user = null; S.items = [];
+  try { localStorage.removeItem("rt_auth"); } catch (e) {}
+  $("app").hidden = true; $("tabs").hidden = true; $("user").hidden = true; $("gate").hidden = false;
+  $("p").value = "";
+  if (expired) $("loginErr").textContent = "Your session expired. Please sign in again.";
+}
+$("logout").addEventListener("click", () => signOut(false));
 
-      if (watched) li.classList.add("watched");
+let loggingIn = false;
+$("loginForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  if (loggingIn) return;                       // a double press can no longer fire two logins/loads
+  loggingIn = true; $("loginBtn").disabled = true; $("loginErr").textContent = "";
+  try {
+    const r = await fetch(`${API}/api/login`, { method:"POST", headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ username:$("u").value.trim(), password:$("p").value }) });
+    const d = await r.json();
+    if (!r.ok) { $("loginErr").textContent = d.error || "Sign in failed"; return; }
+    S.token = d.token; S.user = d.username;
+    try { localStorage.setItem("rt_auth", JSON.stringify({ token:d.token, user:d.username })); } catch (e) {}
+    showApp(); await loadList();
+  } catch (err) { console.error(err); $("loginErr").textContent = "Can't reach the server. It may be waking up, try again in a few seconds."; }
+  finally { loggingIn = false; $("loginBtn").disabled = false; }
+});
 
-      cb.addEventListener("change", () => {
-        li.classList.toggle("watched", cb.checked);
-        showToast(cb.checked ? `✅ Marked as watched!` : `↩️ Marked as unwatched`);
-        saveList(); updateStats();
-      });
-
-      li.append(cWrap, body, del);
-      return li;
-    }
-
-    /* ═══════════════════════════
-       ADD
-    ═══════════════════════════ */
-    async function addSeries() {
-      const name = inputBox.value.trim();
-      if (!name) return;
-
-      /* check duplicate */
-      const existing = [...seriesList.querySelectorAll("li")]
-        .find(l => l.dataset.rawTitle.toLowerCase() === name.toLowerCase());
-      if (existing) {
-        showToast(`⚠️ "${name}" is already in your list`);
-        return;
-      }
-
-      const poster = inputBox.dataset.poster || "";
-      const li = buildItem(name, false, poster);
-      seriesList.appendChild(li);
-      inputBox.value = "";
-      delete inputBox.dataset.poster;
-      acBox.style.display = "none";
-      showToast(`🎬 "${name}" added!`);
-      updateStats();
-      await saveList();
-    }
-
-    /* ── enter key on add input ── */
-    inputBox.addEventListener("keydown", e => {
-      if (e.key === "Enter") addSeries();
-    });
-
-    /* ═══════════════════════════
-       SAVE / LOAD
-    ═══════════════════════════ */
-    async function saveList() {
-      if (!currentUser || !authToken) return;
-      const data = [...seriesList.querySelectorAll("li")].map(li => ({
-        name:    li.dataset.rawTitle,
-        watched: li.querySelector("input[type='checkbox']").checked,
-        poster:  (li.querySelector(".poster-thumb") || {}).src || ""
-      }));
-      try {
-        await fetch(`${API_BASE}/api/watchlist`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${authToken}` },
-          body: JSON.stringify({ watchlist: data })
-        });
-      } catch(e) { console.error(e); }
-    }
-
-    async function loadList() {
-      seriesList.innerHTML = "";
-      if (!currentUser || !authToken) return;
-      try {
-        const res  = await fetch(`${API_BASE}/api/watchlist`, {
-          headers: { "Authorization": `Bearer ${authToken}` }
-        });
-        const data = await res.json();
-        (data.watchlist || []).forEach((item, i) => {
-          const li = buildItem(item.name, item.watched, item.poster);
-          li.style.animationDelay = `${i * 45}ms`;
-          seriesList.appendChild(li);
-        });
-        updateStats();
-      } catch(e) { console.error(e); }
-    }
-  </script>
+/* stay signed in */
+(async () => {
+  try {
+    const a = JSON.parse(localStorage.getItem("rt_auth") || "null");
+    if (a && a.token) { S.token = a.token; S.user = a.user; showApp(); await loadList(); }
+  } catch (e) {}
+})();
+</script>
 </body>
 </html>
