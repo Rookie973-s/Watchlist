@@ -226,7 +226,7 @@ const IMG  = "https://image.tmdb.org/t/p/w342";
 const API  = "https://rtwatch-backend.onrender.com";
 const TG   = "https://t.me/rtmoviestalk";
 
-const S = { token:null, user:null, items:[], type:"all", status:"all", sort:"latest", q:"" };
+const S = { loaded:false, token:null, user:null, items:[], type:"all", status:"all", sort:"latest", q:"" };
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const isTv = it => it.mediaType === "tv";
@@ -236,14 +236,14 @@ const ts = it => it.addedAt ? Date.parse(it.addedAt) || 0 : 0;
 
 /* ---------- toast ---------- */
 let toastTimer;
-function toast(msg, actLabel, actFn) {
+function toast(msg, actLabel, actFn, dur) {
   $("toastMsg").textContent = msg;
   const b = $("toastAct");
   b.hidden = !actLabel;
   if (actLabel) { b.textContent = actLabel; b.onclick = () => { actFn(); $("toast").classList.remove("show"); }; }
   $("toast").classList.add("show");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => $("toast").classList.remove("show"), actLabel ? 5000 : 2600);
+  toastTimer = setTimeout(() => $("toast").classList.remove("show"), dur || (actLabel ? 5000 : 2600));
 }
 
 /* ---------- data: one source of truth (S.items), the DOM is only a view ---------- */
@@ -264,12 +264,12 @@ async function flush() {
   saving = true;
   while (dirty) {
     dirty = false;
-    if (!S.token) break;
+    if (!S.token || !S.loaded) break;   // never save until the real list has loaded
     const watchlist = S.items.map(({ name, watched, poster, tmdbId, mediaType, year, addedAt }) =>
       ({ name, watched, poster, tmdbId: tmdbId || 0, mediaType: mediaType || "", year: year || "", addedAt: addedAt || null }));
     try {
       const r = await fetch(`${API}/api/watchlist`, { method:"POST",
-        headers:{ "Content-Type":"application/json", Authorization:`Bearer ${S.token}` }, body: JSON.stringify({ watchlist }) });
+        headers:{ "Content-Type":"application/json", Authorization:`Bearer ${S.token}` }, body: JSON.stringify({ watchlist, confirmEmpty: watchlist.length === 0 }) });
       if (!r.ok) toast("Couldn't sync your list. Check your connection.");
     } catch (e) { console.error(e); toast("Couldn't sync your list. Check your connection."); }
   }
@@ -279,13 +279,24 @@ async function flush() {
 let loadSeq = 0;
 async function loadList() {
   const seq = ++loadSeq;
-  const r = await fetch(`${API}/api/watchlist`, { headers:{ Authorization:`Bearer ${S.token}` } });
-  if (r.status === 401) return signOut(true);
-  const d = await r.json();
-  if (seq !== loadSeq) return;
-  S.items = dedupe(d.watchlist || []);
-  render();
-  migrateOld();
+  S.loaded = false;
+  try {
+    const r = await fetch(`${API}/api/watchlist`, { headers:{ Authorization:`Bearer ${S.token}` } });
+    if (r.status === 401) return signOut(true);
+    if (!r.ok) throw new Error("load failed " + r.status);
+    const d = await r.json();
+    if (seq !== loadSeq) return;
+    S.items = dedupe(d.watchlist || []);
+    S.loaded = true;
+    render();
+    migrateOld();
+  } catch (e) {
+    console.error(e);
+    if (seq !== loadSeq) return;
+    S.items = []; renderHero();
+    $("rows").innerHTML = `<div class="empty"><h3>Couldn't load your list</h3>Your saved list is safe. The server may still be waking up.<br><br><button class="btn" id="retry">Try again</button></div>`;
+    $("retry").onclick = loadList;
+  }
 }
 
 /* older entries only stored a name + poster: look them up once so they get a type, year and HD poster */
@@ -526,7 +537,7 @@ function showApp() {
   $("uname").textContent = S.user; $("avatar").textContent = S.user.charAt(0);
 }
 function signOut(expired) {
-  loadSeq++; clearInterval(hero.timer); hero.keys = ""; S.token = S.user = null; S.items = [];
+  loadSeq++; S.loaded = false; clearInterval(hero.timer); hero.keys = ""; S.token = S.user = null; S.items = [];
   try { localStorage.removeItem("rt_auth"); } catch (e) {}
   $("app").hidden = true; $("tabs").hidden = true; $("user").hidden = true; $("gate").hidden = false;
   $("p").value = "";
@@ -546,7 +557,9 @@ $("loginForm").addEventListener("submit", async e => {
     if (!r.ok) { $("loginErr").textContent = d.error || "Sign in failed"; return; }
     S.token = d.token; S.user = d.username;
     try { localStorage.setItem("rt_auth", JSON.stringify({ token:d.token, user:d.username })); } catch (e) {}
-    showApp(); await loadList();
+    showApp();
+    if (d.created) toast(`New account created for "${d.username}". Expected your old list? Sign out and check the spelling.`, null, null, 7000);
+    await loadList();
   } catch (err) { console.error(err); $("loginErr").textContent = "Can't reach the server. It may be waking up, try again in a few seconds."; }
   finally { loggingIn = false; $("loginBtn").disabled = false; }
 });
